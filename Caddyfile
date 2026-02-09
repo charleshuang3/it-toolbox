@@ -1,0 +1,12 @@
+# caddy run --config dev/Caddyfile
+{
+	http_port 8880
+}
+http://0.0.0.0:8880 {
+#	handle /api/* {
+#		reverse_proxy 127.0.0.1:8888
+#	}
+	handle {
+		reverse_proxy 127.0.0.1:8889
+	}
+}
