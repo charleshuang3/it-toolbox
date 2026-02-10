@@ -24,9 +24,11 @@
         </div>
 
         <div class="flex-none gap-2">
-          <button class="btn btn-ghost btn-circle">
-            <span class="text-lg">🌓</span>
-          </button>
+          <label class="swap swap-rotate btn btn-ghost btn-circle">
+            <input type="checkbox" class="theme-controller" value="synthwave" />
+            <Icon icon="solar:sun-bold" class="swap-off w-6 h-6" />
+            <Icon icon="solar:moon-bold" class="swap-on w-6 h-6" />
+          </label>
           <div class="dropdown dropdown-end">
             <label tabindex="0" class="btn btn-ghost btn-circle avatar">
               <div class="w-10 rounded-full bg-neutral text-neutral-content">
@@ -87,6 +89,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { Icon } from '@iconify/vue';
 
 const isSidebarOpen = ref(false);
 </script>

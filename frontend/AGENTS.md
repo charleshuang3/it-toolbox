@@ -11,3 +11,4 @@ Always use the `context7` skill to retrieve up-to-date documentation:
 - Vue.js: Search for "vuejs" + specific topic
 - DaisyUI: Search for "daisyui" + component name
 - TypeScript: Search for "typescript" + feature
+- Iconify: Use `<Icon icon="..." />` Tailwind class, e.g., `<Icon icon="solar:sun-bold" />`
