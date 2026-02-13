@@ -30,7 +30,7 @@ const toolComponent = computed(() => {
     <!-- Tool content -->
     <template v-else>
       <div class="flex justify-center flex-row">
-        <div class="max-w-200">
+        <div class="max-w-200 lg:w-200 sm:w-full">
           <div class="flex items-center gap-3 mb-4">
             <Icon :icon="tool.icon" class="w-8 h-8 text-primary" />
             <div>

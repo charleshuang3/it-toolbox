@@ -38,11 +38,14 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import SearchModal from '../SearchModal.vue';
 
-const props = withDefaults(defineProps<{
-  title?: string;
-}>(), {
-  title: 'Toolbox'
-});
+const props = withDefaults(
+  defineProps<{
+    title?: string;
+  }>(),
+  {
+    title: 'Toolbox',
+  },
+);
 
 const isSearchOpen = ref(false);
 
