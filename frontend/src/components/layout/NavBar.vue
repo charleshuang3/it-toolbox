@@ -14,7 +14,11 @@
     </div>
 
     <div class="flex-none hidden md:block">
-      <input type="text" placeholder="Search... (Ctrl+k)" class="input input-bordered w-30 md:w-auto" />
+      <button @click="openSearch" class="btn btn-ghost">
+        <Icon icon="material-symbols:search" class="w-6 h-6 mr-2" />
+        Search
+        <span class="text-xs text-base-content/50 ml-2">(Ctrl+K)</span>
+      </button>
     </div>
 
     <div class="flex-none gap-2">
@@ -25,10 +29,35 @@
       </label>
     </div>
   </div>
+
+  <SearchModal v-model="isSearchOpen" />
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
 import { Icon } from '@iconify/vue';
+import SearchModal from '../SearchModal.vue';
+
+const isSearchOpen = ref(false);
+
+const openSearch = () => {
+  isSearchOpen.value = true;
+};
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+    event.preventDefault();
+    isSearchOpen.value = true;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeyDown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeyDown);
+});
 
 defineEmits<{
   'toggle-sidebar': [];
