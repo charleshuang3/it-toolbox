@@ -4,5 +4,5 @@ export interface Tool {
   category: string;
   description: string;
   icon: string;
-  component: string;
+  component: () => Promise<any>;
 }

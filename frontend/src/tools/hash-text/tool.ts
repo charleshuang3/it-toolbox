@@ -6,5 +6,5 @@ export const hashText: Tool = {
   category: 'Crypto',
   description: 'Compute hash values for text using various algorithms (MD5, SHA1, SHA256, etc.)',
   icon: 'tabler:hash',
-  component: './hash-text.vue',
+  component: () => import('./hash-text.vue'),
 };

@@ -1,11 +1,15 @@
 <template>
-  <ul class="menu p-2 w-full text-base-content">
+  <ul class="menu rounded-box p-2 w-full text-base-content">
     <li v-for="(tools, category) in toolsByCategory" :key="category">
       <details :open="isCategoryOpen(category)">
         <summary class="font-medium">{{ category }}</summary>
-        <ul class="p-1">
-          <li v-for="tool in tools" :key="tool.path" :class="{ 'menu-active': $route.path === `/tools/${tool.path}` }">
-            <router-link :to="`/tools/${tool.path}`" @click="$emit('tool-click')">
+        <ul class="ml-3 p-2">
+          <li v-for="tool in tools" :key="tool.path">
+            <router-link
+              :to="`/tools/${tool.path}`"
+              @click="$emit('tool-click')"
+              :class="{ 'menu-active': $route.path === `/tools/${tool.path}` }"
+            >
               <Icon :icon="tool.icon" class="w-5 h-5" />
               {{ tool.name }}
             </router-link>

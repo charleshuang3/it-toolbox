@@ -15,7 +15,7 @@ const tool = computed(() => {
 const toolComponent = computed(() => {
   const t = tool.value;
   if (!t) return null;
-  return defineAsyncComponent(() => import(`../tools/${t.path}/${t.component}`));
+  return defineAsyncComponent(t.component);
 });
 </script>
 

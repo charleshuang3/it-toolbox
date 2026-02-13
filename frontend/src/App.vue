@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-base-200 flex flex-col">
-    <Navbar @toggle-sidebar="isSidebarCollapsed = !isSidebarCollapsed" />
+    <Navbar :title="title" @toggle-sidebar="isSidebarCollapsed = !isSidebarCollapsed" />
 
     <div class="flex flex-1 overflow-hidden">
       <input id="main-drawer" type="checkbox" class="drawer-toggle" v-model="isSidebarOpen" />
@@ -16,6 +16,10 @@
 import { ref } from 'vue';
 import Navbar from './components/layout/NavBar.vue';
 import Sidebar from './components/layout/SideBar.vue';
+
+const props = defineProps<{
+  title: string;
+}>();
 
 const isSidebarOpen = ref(false);
 const isSidebarCollapsed = ref(false);
