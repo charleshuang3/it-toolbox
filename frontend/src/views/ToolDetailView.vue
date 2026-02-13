@@ -1,0 +1,47 @@
+<script setup lang="ts">
+import { computed, defineAsyncComponent } from 'vue';
+import { Icon } from '@iconify/vue';
+import { allTools } from '../tools';
+
+const props = defineProps<{
+  name: string;
+}>();
+
+const tool = computed(() => {
+  return allTools.find((t) => t.path === props.name);
+});
+
+// Dynamic component loading based on tool path
+const toolComponent = computed(() => {
+  const t = tool.value;
+  if (!t) return null;
+  return defineAsyncComponent(() => import(`../tools/${t.path}/${t.component}`));
+});
+</script>
+
+<template>
+  <div class="space-y-4">
+    <!-- Tool not found -->
+    <div v-if="!tool" class="alert alert-error">
+      <Icon icon="material-symbols:error" class="w-6 h-6" />
+      <span>Tool "{{ name }}" not found</span>
+    </div>
+
+    <!-- Tool content -->
+    <template v-else>
+      <div class="flex justify-center flex-row">
+        <div class="max-w-200">
+          <div class="flex items-center gap-3 mb-4">
+            <Icon :icon="tool.icon" class="w-8 h-8 text-primary" />
+            <div>
+              <h1 class="text-2xl font-bold">{{ tool.name }}</h1>
+              <p class="text-sm opacity-70">{{ tool.description }}</p>
+            </div>
+          </div>
+
+          <component :is="toolComponent" v-if="toolComponent" />
+        </div>
+      </div>
+    </template>
+  </div>
+</template>
