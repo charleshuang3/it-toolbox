@@ -65,7 +65,7 @@ function formatCryptoJSHash(hash: CryptoJS.lib.WordArray): string {
         .join('');
     }
     case 'base64url':
-      return hash.toString(CryptoJS.enc.Base64).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      return hash.toString(CryptoJS.enc.Base64url);
     case 'base64':
     default:
       return hash.toString(CryptoJS.enc.Base64);
