@@ -72,6 +72,10 @@ function formatCryptoJSHash(hash: CryptoJS.lib.WordArray): string {
   }
 }
 
+function clearInput() {
+  inputText.value = '';
+}
+
 function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text);
 }
@@ -85,8 +89,11 @@ watch([inputText, encoding], computeHashes);
       <div class="card-body">
         <!-- Input textarea -->
         <div class="form-control">
-          <label class="label" for="input-text">
+          <label class="label justify-between w-full" for="input-text">
             <span class="label-text">Your text to hash:</span>
+            <button class="btn btn-ghost btn-sm" :disabled="!inputText" @click="clearInput">
+              <Icon icon="solar:trash-bin-trash-bold" class="h-4 w-4" />
+            </button>
           </label>
           <textarea
             id="input-text"
