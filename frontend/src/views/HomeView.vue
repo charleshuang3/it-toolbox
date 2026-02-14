@@ -23,7 +23,7 @@ function navigateToTool(toolPath: string) {
         <div
           v-for="tool in toolsByCategory[category]"
           :key="tool.path"
-          class="card bg-base-100 shadow-md hover:shadow-xl transition-shadow cursor-pointer"
+          class="card bg-base-100 card-border-1 cursor-pointer border border-gray-300 hover:border-primary"
           @click="navigateToTool(tool.path)"
         >
           <div class="card-body">
