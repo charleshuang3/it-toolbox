@@ -38,7 +38,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import SearchModal from '../SearchModal.vue';
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     title?: string;
   }>(),

@@ -17,7 +17,7 @@ import { ref } from 'vue';
 import Navbar from './components/layout/NavBar.vue';
 import Sidebar from './components/layout/SideBar.vue';
 
-const props = defineProps<{
+defineProps<{
   title: string;
 }>();
 
