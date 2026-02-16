@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue';
+import { computed, defineAsyncComponent, ref, onMounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import { allTools } from '../tools';
 
@@ -16,6 +16,19 @@ const toolComponent = computed(() => {
   const t = tool.value;
   if (!t) return null;
   return defineAsyncComponent(t.component);
+});
+
+// Browser support warning
+const browserWarning = ref('');
+
+onMounted(() => {
+  const t = tool.value;
+  if (t?.checkBrowserSupport) {
+    const result = t.checkBrowserSupport();
+    if (!result.isSupported) {
+      browserWarning.value = result.warningMessage;
+    }
+  }
 });
 </script>
 
@@ -37,6 +50,12 @@ const toolComponent = computed(() => {
               <h1 class="text-2xl font-bold">{{ tool.name }}</h1>
               <p class="text-sm opacity-70">{{ tool.description }}</p>
             </div>
+          </div>
+
+          <!-- Browser support warning -->
+          <div v-if="browserWarning" class="alert alert-warning mb-4">
+            <Icon icon="solar:danger-triangle-bold" class="h-5 w-5" />
+            <span>{{ browserWarning }}</span>
           </div>
 
           <component :is="toolComponent" v-if="toolComponent" />

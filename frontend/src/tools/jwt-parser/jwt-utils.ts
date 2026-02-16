@@ -77,7 +77,7 @@ export const SUPPORTED_ALGORITHMS = [
   'EdDSA',
 ];
 
-export async function generateToken(secretKey: string, payload: Record<string, any>): Promise<string> {
+export async function generateToken(secretKey: string, payload: Record<string, unknown>): Promise<string> {
   const encoder = new TextEncoder();
   const key = encoder.encode(secretKey);
 
@@ -182,7 +182,7 @@ export async function verifySignature(
     });
 
     return { verified: true, error: null };
-  } catch (error) {
+  } catch {
     return { verified: false, error: 'Signature invalid' };
   }
 }

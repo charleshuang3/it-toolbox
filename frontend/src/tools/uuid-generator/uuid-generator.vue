@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import { v4, v5, v7 } from 'uuid';
 
@@ -10,7 +10,6 @@ const count = ref(1);
 const namespace = ref(v5.DNS); // DNS namespace by default
 const name = ref('');
 const results = ref<string[]>([]);
-const hasSecureRandom = ref(true);
 
 const predefinedNamespaces = [
   { label: 'DNS', value: v5.DNS },
@@ -37,15 +36,6 @@ const versionInfo = computed(() => {
 
 const maxCount = computed(() => {
   return version.value === 'v5' ? 1 : 20;
-});
-
-onMounted(() => {
-  // Check if crypto.getRandomValues is available
-  try {
-    hasSecureRandom.value = typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function';
-  } catch {
-    hasSecureRandom.value = false;
-  }
 });
 
 watch(selectedNamespace, (val) => {
@@ -98,15 +88,6 @@ function copyAll() {
   <div class="tool-content flex justify-center">
     <div class="card bg-base-100 w-full">
       <div class="card-body">
-        <!-- Security warning -->
-        <div v-if="!hasSecureRandom" class="alert alert-warning">
-          <Icon icon="solar:danger-triangle-bold" class="h-5 w-5" />
-          <span>
-            Your browser doesn't support secure random generation (crypto.getRandomValues). UUIDs will fall back to
-            Math.random() which may not be cryptographically secure.
-          </span>
-        </div>
-
         <!-- Version selector -->
         <div class="form-control flex gap-1">
           <label class="label">

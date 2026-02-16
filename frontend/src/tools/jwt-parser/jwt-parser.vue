@@ -26,7 +26,6 @@ const verificationError = ref<string | null>(null);
 
 const headerFields = ref<FieldDisplay[]>([]);
 const payloadFields = ref<FieldDisplay[]>([]);
-const hasSubtleCrypto = ref(true);
 
 function updateFields() {
   headerFields.value = getHeaderFields(parsedResult.value.header);
@@ -66,13 +65,6 @@ watch([secretKey], () => {
 });
 
 onMounted(async () => {
-  // Check if crypto.subtle is available
-  try {
-    hasSubtleCrypto.value = typeof crypto !== 'undefined' && typeof crypto.subtle !== 'undefined';
-  } catch {
-    hasSubtleCrypto.value = false;
-  }
-
   const now = Math.floor(Date.now() / 1000);
   inputToken.value = await generateToken(secretKey.value, {
     sub: '1234567890',
@@ -94,15 +86,6 @@ onMounted(async () => {
   <div class="tool-content flex justify-center">
     <div class="card bg-base-100 w-full">
       <div class="card-body">
-        <!-- Security warning -->
-        <div v-if="!hasSubtleCrypto" class="alert alert-warning">
-          <Icon icon="solar:danger-triangle-bold" class="h-5 w-5" />
-          <span>
-            Your browser doesn't support the Web Crypto API (crypto.subtle). JWT signature verification will not be
-            available.
-          </span>
-        </div>
-
         <!-- Input textarea -->
         <div class="form-control">
           <label class="label justify-between w-full" for="input-token">
