@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import { ulid, decodeTime } from 'ulid';
 
@@ -9,15 +9,17 @@ const showTimestamp = ref(false);
 
 const maxCount = 20;
 
-function generate() {
-  results.value = [];
-
-  // Clamp count to valid range
-  if (count.value < 1) {
+// Auto-correct count to valid range
+watch(count, (val) => {
+  if (val < 1) {
     count.value = 1;
-  } else if (count.value > maxCount) {
+  } else if (val > maxCount) {
     count.value = maxCount;
   }
+});
+
+function generate() {
+  results.value = [];
 
   for (let i = 0; i < count.value; i++) {
     results.value.push(ulid());
@@ -57,20 +59,19 @@ const ulidInfo = computed(() => {
         </div>
 
         <!-- Count input -->
-        <div class="form-control flex gap-1">
+        <div class="form-control flex gap-2">
           <label class="label">
             <span class="label-text">Number of ULIDs</span>
           </label>
           <input
             v-model.number="count"
             type="number"
-            class="input input-bordered validator"
+            class="input input-bordered"
             required
             min="1"
             :max="maxCount"
             :title="`Must be between 1 to ${maxCount}`"
           />
-          <p class="validator-hint">Must be between 1 to {{ maxCount }}</p>
         </div>
 
         <!-- Show timestamp toggle -->

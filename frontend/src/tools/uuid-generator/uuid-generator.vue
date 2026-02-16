@@ -51,15 +51,17 @@ watch(version, () => {
   }
 });
 
-function generate() {
-  results.value = [];
-
-  // Clamp count to valid range
-  if (count.value < 1) {
+// Auto-correct count to valid range
+watch(count, (val) => {
+  if (val < 1) {
     count.value = 1;
-  } else if (count.value > maxCount.value) {
+  } else if (val > maxCount.value) {
     count.value = maxCount.value;
   }
+});
+
+function generate() {
+  results.value = [];
 
   if (version.value === 'v5') {
     if (!namespace.value || !name.value) return;
@@ -125,20 +127,19 @@ function copyAll() {
         </div>
 
         <!-- Count input (not for v5) -->
-        <div v-if="version !== 'v5'" class="form-control flex gap-1">
+        <div v-if="version !== 'v5'" class="form-control flex gap-2">
           <label class="label">
             <span class="label-text">Number of UUIDs</span>
           </label>
           <input
             v-model.number="count"
             type="number"
-            class="input input-bordered validator"
+            class="input input-bordered"
             required
             min="1"
             :max="maxCount"
             :title="`Must be between 1 to ${maxCount}`"
           />
-          <p class="validator-hint">Must be between 1 to {{ maxCount }}</p>
         </div>
 
         <!-- v5 specific inputs -->
