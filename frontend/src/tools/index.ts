@@ -1,9 +1,10 @@
 import { hashText } from './hash-text/tool';
 import { uuidGenerator } from './uuid-generator/tool';
+import { ulidGenerator } from './ulid-generator/tool';
 import { jwtParser } from './jwt-parser/tool';
 import { Tool } from './tools';
 
-export const allTools: Tool[] = [hashText, uuidGenerator, jwtParser];
+export const allTools: Tool[] = [hashText, uuidGenerator, ulidGenerator, jwtParser];
 
 const byCategory: Record<string, Tool[]> = {};
 allTools.forEach((tool) => {
