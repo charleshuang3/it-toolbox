@@ -5,6 +5,7 @@ import { jwtParser } from './jwt-parser/tool';
 import { randomStringGenerator } from './random-string-generator/tool';
 import { encryption } from './encryption/tool';
 import { bcrypt } from './bcrypt/tool';
+import { hmacTool } from './hmac/tool';
 import { Tool } from './tools';
 
 export const allTools: Tool[] = [
@@ -15,6 +16,7 @@ export const allTools: Tool[] = [
   randomStringGenerator,
   encryption,
   bcrypt,
+  hmacTool,
 ];
 
 const byCategory: Record<string, Tool[]> = {};
