@@ -4,9 +4,18 @@ import { ulidGenerator } from './ulid-generator/tool';
 import { jwtParser } from './jwt-parser/tool';
 import { randomStringGenerator } from './random-string-generator/tool';
 import { encryption } from './encryption/tool';
+import { bcrypt } from './bcrypt/tool';
 import { Tool } from './tools';
 
-export const allTools: Tool[] = [hashText, uuidGenerator, ulidGenerator, jwtParser, randomStringGenerator, encryption];
+export const allTools: Tool[] = [
+  hashText,
+  uuidGenerator,
+  ulidGenerator,
+  jwtParser,
+  randomStringGenerator,
+  encryption,
+  bcrypt,
+];
 
 const byCategory: Record<string, Tool[]> = {};
 allTools.forEach((tool) => {
