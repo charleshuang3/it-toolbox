@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
-import { bytesToHex } from '@noble/ciphers/utils.js';
 import { md5, sha1, ripemd160 } from '@noble/hashes/legacy.js';
 import { sha224, sha256, sha384, sha512 } from '@noble/hashes/sha2.js';
 import { sha3_224, sha3_256, sha3_384, sha3_512, keccak_256 } from '@noble/hashes/sha3.js';
+import { formatBytes } from '../../utils/bytes-formatter';
 
 const inputText = ref('');
 const encoding = ref('base64');
@@ -57,37 +57,7 @@ async function computeHashes() {
 }
 
 function formatHash(hashBytes: Uint8Array): string {
-  switch (encoding.value) {
-    case 'hex':
-      return bytesToHex(hashBytes);
-    case 'binary': {
-      return Array.from(hashBytes)
-        .map((b) => b.toString(2).padStart(8, '0'))
-        .join('');
-    }
-    case 'base64url':
-      return bytesToBase64url(hashBytes);
-    case 'base64':
-    default:
-      return bytesToBase64(hashBytes);
-  }
-}
-
-function bytesToBase64(bytes: Uint8Array): string {
-  // @ts-expect-error: toBase64 is supported on browsers.
-  if (bytes.toBase64) {
-    // @ts-expect-error: toBase64 is supported on browsers.
-    return bytes.toBase64();
-  }
-  let binary = '';
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-}
-
-function bytesToBase64url(bytes: Uint8Array): string {
-  return bytesToBase64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return formatBytes(hashBytes, encoding.value as 'hex' | 'base64' | 'base64url' | 'binary');
 }
 
 function clearInput() {
