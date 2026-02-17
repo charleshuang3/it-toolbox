@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { Icon } from '@iconify/vue';
-import { sha256 } from '@noble/hashes/sha2.js';
-import { gcm, cbc, ctr } from '@noble/ciphers/aes.js';
-import { chacha20poly1305 } from '@noble/ciphers/chacha.js';
-import { bytesToHex, hexToBytes, bytesToUtf8, utf8ToBytes } from '@noble/ciphers/utils.js';
+import { bytesToHex, hexToBytes, bytesToUtf8, utf8ToBytes, randomBytes } from '@noble/ciphers/utils.js';
+import type { Cipher, AsyncCipher } from '@noble/ciphers/utils.js';
 
 type AlgoType = 'AES-GCM' | 'AES-CBC' | 'AES-CTR' | 'ChaCha20-Poly1305';
 
@@ -16,18 +14,65 @@ const algoConfig: Record<AlgoType, { nonceSize: number; keySize: number }> = {
   'ChaCha20-Poly1305': { nonceSize: 12, keySize: 32 },
 };
 
+// Dynamic import for SHA-256 hash
+async function getSha256(data: string): Promise<Uint8Array> {
+  const encoder = new TextEncoder();
+  const encoded = encoder.encode(data);
+  if (crypto.subtle) {
+    const { sha256 } = await import('@noble/hashes/webcrypto.js');
+    const hashBuffer = await sha256(encoded);
+    return new Uint8Array(hashBuffer);
+  }
+  const { sha256 } = await import('@noble/hashes/sha2.js');
+  const hashBuffer = await sha256(encoded);
+  return new Uint8Array(hashBuffer);
+}
+
+// Dynamic import for AES-GCM cipher
+async function getGcm(key: Uint8Array, nonce: Uint8Array): Promise<Cipher | AsyncCipher> {
+  if (crypto.subtle) {
+    const { gcm } = await import('@noble/ciphers/webcrypto.js');
+    return gcm(key, nonce);
+  }
+  const { gcm } = await import('@noble/ciphers/aes.js');
+  return gcm(key, nonce);
+}
+
+// Dynamic import for AES-CBC cipher
+async function getCbc(key: Uint8Array, nonce: Uint8Array): Promise<Cipher | AsyncCipher> {
+  if (crypto.subtle) {
+    const { cbc } = await import('@noble/ciphers/webcrypto.js');
+    return cbc(key, nonce);
+  }
+  const { cbc } = await import('@noble/ciphers/aes.js');
+  return cbc(key, nonce);
+}
+
+// Dynamic import for AES-CTR cipher
+async function getCtr(key: Uint8Array, nonce: Uint8Array): Promise<Cipher | AsyncCipher> {
+  if (crypto.subtle) {
+    const { ctr } = await import('@noble/ciphers/webcrypto.js');
+    return ctr(key, nonce);
+  }
+  const { ctr } = await import('@noble/ciphers/aes.js');
+  return ctr(key, nonce);
+}
+
+// Dynamic import for ChaCha20-Poly1305 (no webcrypto version, always use pure JS)
+async function getChacha20poly1305(key: Uint8Array, nonce: Uint8Array): Promise<Cipher> {
+  const { chacha20poly1305 } = await import('@noble/ciphers/chacha.js');
+  return chacha20poly1305(key, nonce);
+}
+
 // Derive a key from the secret using SHA-256 hash
 async function deriveKey(secret: string, keySize: number): Promise<Uint8Array> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(secret);
-  const hashBuffer = await sha256(data);
-  const hashArray = new Uint8Array(hashBuffer);
+  const hashArray = await getSha256(secret);
   return hashArray.slice(0, keySize);
 }
 
-// Generate a random nonce
-function generateNonce(size: number): Uint8Array {
-  return crypto.getRandomValues(new Uint8Array(size));
+// Generate a random nonce using dynamic import
+async function generateNonce(size: number): Promise<Uint8Array> {
+  return randomBytes(size);
 }
 
 // Generate a zero-filled nonce
@@ -46,22 +91,22 @@ async function encrypt(plaintext: string, secret: string, algorithm: AlgoType, n
 
   switch (algorithm) {
     case 'AES-GCM': {
-      const cipher = gcm(key, nonce);
-      ciphertext = cipher.encrypt(plaintextBytes);
+      const cipher = await getGcm(key, nonce);
+      ciphertext = await cipher.encrypt(plaintextBytes);
       break;
     }
     case 'AES-CBC': {
-      const cipher = cbc(key, nonce);
-      ciphertext = cipher.encrypt(plaintextBytes);
+      const cipher = await getCbc(key, nonce);
+      ciphertext = await cipher.encrypt(plaintextBytes);
       break;
     }
     case 'AES-CTR': {
-      const cipher = ctr(key, nonce);
-      ciphertext = cipher.encrypt(plaintextBytes);
+      const cipher = await getCtr(key, nonce);
+      ciphertext = await cipher.encrypt(plaintextBytes);
       break;
     }
     case 'ChaCha20-Poly1305': {
-      const cipher = chacha20poly1305(key, nonce);
+      const cipher = await getChacha20poly1305(key, nonce);
       ciphertext = cipher.encrypt(plaintextBytes);
       break;
     }
@@ -81,22 +126,22 @@ async function decrypt(ciphertextHex: string, secret: string, algorithm: AlgoTyp
 
   switch (algorithm) {
     case 'AES-GCM': {
-      const cipher = gcm(key, nonce);
-      plaintext = cipher.decrypt(ciphertext);
+      const cipher = await getGcm(key, nonce);
+      plaintext = await cipher.decrypt(ciphertext);
       break;
     }
     case 'AES-CBC': {
-      const cipher = cbc(key, nonce);
-      plaintext = cipher.decrypt(ciphertext);
+      const cipher = await getCbc(key, nonce);
+      plaintext = await cipher.decrypt(ciphertext);
       break;
     }
     case 'AES-CTR': {
-      const cipher = ctr(key, nonce);
-      plaintext = cipher.decrypt(ciphertext);
+      const cipher = await getCtr(key, nonce);
+      plaintext = await cipher.decrypt(ciphertext);
       break;
     }
     case 'ChaCha20-Poly1305': {
-      const cipher = chacha20poly1305(key, nonce);
+      const cipher = await getChacha20poly1305(key, nonce);
       plaintext = cipher.decrypt(ciphertext);
       break;
     }
@@ -195,9 +240,9 @@ function swapToDecrypt() {
 }
 
 // Generate random nonce for encryption
-function generateEncryptNonce() {
+async function generateEncryptNonce() {
   const config = algoConfig[encryptAlgo.value];
-  encryptNonce.value = bytesToHex(generateNonce(config.nonceSize));
+  encryptNonce.value = bytesToHex(await generateNonce(config.nonceSize));
 }
 
 // Clear nonce field
