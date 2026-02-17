@@ -1,22 +1,18 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
-import { hmac } from '@noble/hashes/hmac.js';
-import { md5, sha1 } from '@noble/hashes/legacy.js';
-import { sha256, sha384, sha512 } from '@noble/hashes/sha2.js';
+import { hmacText, type HashType } from '../../utils/hash';
 import { formatBytes, type OutputEncoding } from '../../utils/bytes-formatter';
 
-type HashFunction = 'md5' | 'sha1' | 'sha256' | 'sha384' | 'sha512';
+const hashFunctionValues: HashType[] = ['md5', 'sha1', 'sha256', 'sha384', 'sha512'];
 
-const hashFunctions: { label: string; value: HashFunction }[] = [
-  { label: 'MD5', value: 'md5' },
-  { label: 'SHA1', value: 'sha1' },
-  { label: 'SHA256', value: 'sha256' },
-  { label: 'SHA384', value: 'sha384' },
-  { label: 'SHA512', value: 'sha512' },
-];
+const hashFunctions = hashFunctionValues.map((value) => ({
+  label: value.toUpperCase(),
+  value,
+}));
 
 const outputEncodings: { label: string; value: OutputEncoding }[] = [
+  { label: 'Binary (base 2)', value: 'binary' },
   { label: 'Hexadecimal (base 16)', value: 'hex' },
   { label: 'Base64 (base 64)', value: 'base64' },
   { label: 'Base64url (base 64 with url safe chars)', value: 'base64url' },
@@ -24,44 +20,21 @@ const outputEncodings: { label: string; value: OutputEncoding }[] = [
 
 const plainText = ref('');
 const secret = ref('');
-const hashFunction = ref<HashFunction>('sha256');
+const hashFunction = ref<HashType>('sha256');
 const encoding = ref<OutputEncoding>('hex');
+const hmacResult = ref('');
 
-function getHashFunction(hashFunc: HashFunction) {
-  switch (hashFunc) {
-    case 'md5':
-      return md5;
-    case 'sha1':
-      return sha1;
-    case 'sha256':
-      return sha256;
-    case 'sha384':
-      return sha384;
-    case 'sha512':
-      return sha512;
-    default:
-      return sha256;
-  }
-}
-
-function formatOutput(hashBytes: Uint8Array, enc: OutputEncoding): string {
-  return formatBytes(hashBytes, enc);
-}
-
-const hmacResult = computed(() => {
+async function computeHmac() {
   if (!plainText.value || !secret.value) {
-    return '';
+    hmacResult.value = '';
+    return;
   }
 
-  const encoder = new TextEncoder();
-  const messageBytes = encoder.encode(plainText.value);
-  const keyBytes = encoder.encode(secret.value);
+  const hmacBytes = await hmacText(hashFunction.value as HashType, secret.value, plainText.value);
+  hmacResult.value = formatBytes(hmacBytes, encoding.value);
+}
 
-  const hashFn = getHashFunction(hashFunction.value);
-  const hmacBytes = hmac(hashFn, keyBytes, messageBytes);
-
-  return formatOutput(hmacBytes, encoding.value);
-});
+watch([plainText, secret, hashFunction, encoding], computeHmac);
 
 function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text);

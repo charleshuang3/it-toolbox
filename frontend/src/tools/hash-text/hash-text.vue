@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
-import { md5, sha1, ripemd160 } from '@noble/hashes/legacy.js';
-import { sha224, sha256, sha384, sha512 } from '@noble/hashes/sha2.js';
-import { sha3_224, sha3_256, sha3_384, sha3_512, keccak_256 } from '@noble/hashes/sha3.js';
-import { formatBytes } from '../../utils/bytes-formatter';
+import { hashText, type HashType } from '../../utils/hash';
+import { formatBytes, OutputEncoding } from '../../utils/bytes-formatter';
 
 const inputText = ref('');
-const encoding = ref('base64');
+const encoding = ref('hex');
 
 const encodings = [
   { label: 'Binary (base 2)', value: 'binary' },
@@ -16,20 +14,27 @@ const encodings = [
   { label: 'Base64url (base 64 with url safe chars)', value: 'base64url' },
 ];
 
-const hashResults = ref<Record<string, string>>({
-  MD5: '',
-  SHA1: '',
-  RIPEMD160: '',
-  SHA224: '',
-  SHA256: '',
-  SHA384: '',
-  SHA512: '',
-  SHA3_224: '',
-  SHA3_256: '',
-  SHA3_384: '',
-  SHA3_512: '',
-  KECCAK_256: '',
-});
+const hashTypesValues: HashType[] = [
+  'md5',
+  'sha1',
+  'ripemd160',
+  'sha224',
+  'sha256',
+  'sha384',
+  'sha512',
+  'sha3_224',
+  'sha3_256',
+  'sha3_384',
+  'sha3_512',
+  'keccak_256',
+];
+
+const hashTypes = hashTypesValues.map((value) => ({
+  label: value.toUpperCase(),
+  value,
+}));
+
+const hashResults = ref<Record<string, string>>(Object.fromEntries(hashTypesValues.map((v) => [v.toUpperCase(), ''])));
 
 async function computeHashes() {
   if (!inputText.value) {
@@ -39,25 +44,19 @@ async function computeHashes() {
     return;
   }
 
-  const encoder = new TextEncoder();
-  const inputBytes = encoder.encode(inputText.value);
+  const results = await Promise.all(
+    hashTypes.map(async (ht) => {
+      const hashBytes = await hashText(ht.value, inputText.value);
+      return {
+        key: ht.label,
+        value: formatBytes(hashBytes, encoding.value as OutputEncoding),
+      };
+    }),
+  );
 
-  hashResults.value.MD5 = formatHash(md5(inputBytes));
-  hashResults.value.SHA1 = formatHash(sha1(inputBytes));
-  hashResults.value.RIPEMD160 = formatHash(ripemd160(inputBytes));
-  hashResults.value.SHA224 = formatHash(sha224(inputBytes));
-  hashResults.value.SHA256 = formatHash(sha256(inputBytes));
-  hashResults.value.SHA384 = formatHash(sha384(inputBytes));
-  hashResults.value.SHA512 = formatHash(sha512(inputBytes));
-  hashResults.value.SHA3_224 = formatHash(sha3_224(inputBytes));
-  hashResults.value.SHA3_256 = formatHash(sha3_256(inputBytes));
-  hashResults.value.SHA3_384 = formatHash(sha3_384(inputBytes));
-  hashResults.value.SHA3_512 = formatHash(sha3_512(inputBytes));
-  hashResults.value.KECCAK_256 = formatHash(keccak_256(inputBytes));
-}
-
-function formatHash(hashBytes: Uint8Array): string {
-  return formatBytes(hashBytes, encoding.value as 'hex' | 'base64' | 'base64url' | 'binary');
+  results.forEach((r) => {
+    hashResults.value[r.key] = r.value;
+  });
 }
 
 function clearInput() {

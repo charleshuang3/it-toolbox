@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import { bytesToHex, hexToBytes, bytesToUtf8, utf8ToBytes, randomBytes } from '@noble/ciphers/utils.js';
 import type { Cipher, AsyncCipher } from '@noble/ciphers/utils.js';
+import { hashText } from '../../utils/hash';
 
 type AlgoType = 'AES-GCM' | 'AES-CBC' | 'AES-CTR' | 'ChaCha20-Poly1305';
 
@@ -13,20 +14,6 @@ const algoConfig: Record<AlgoType, { nonceSize: number; keySize: number }> = {
   'AES-CTR': { nonceSize: 12, keySize: 32 },
   'ChaCha20-Poly1305': { nonceSize: 12, keySize: 32 },
 };
-
-// Dynamic import for SHA-256 hash
-async function getSha256(data: string): Promise<Uint8Array> {
-  const encoder = new TextEncoder();
-  const encoded = encoder.encode(data);
-  if (crypto.subtle) {
-    const { sha256 } = await import('@noble/hashes/webcrypto.js');
-    const hashBuffer = await sha256(encoded);
-    return new Uint8Array(hashBuffer);
-  }
-  const { sha256 } = await import('@noble/hashes/sha2.js');
-  const hashBuffer = await sha256(encoded);
-  return new Uint8Array(hashBuffer);
-}
 
 // Dynamic import for AES-GCM cipher
 async function getGcm(key: Uint8Array, nonce: Uint8Array): Promise<Cipher | AsyncCipher> {
@@ -66,7 +53,7 @@ async function getChacha20poly1305(key: Uint8Array, nonce: Uint8Array): Promise<
 
 // Derive a key from the secret using SHA-256 hash
 async function deriveKey(secret: string, keySize: number): Promise<Uint8Array> {
-  const hashArray = await getSha256(secret);
+  const hashArray = await hashText('sha256', secret);
   return hashArray.slice(0, keySize);
 }
 
