@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
-import CryptoJS from 'crypto-js';
+import { bytesToHex } from '@noble/ciphers/utils.js';
+import { md5, sha1, ripemd160 } from '@noble/hashes/legacy.js';
+import { sha224, sha256, sha384, sha512 } from '@noble/hashes/sha2.js';
+import { sha3_224, sha3_256, sha3_384, sha3_512, keccak_256 } from '@noble/hashes/sha3.js';
 
 const inputText = ref('');
 const encoding = ref('base64');
@@ -16,12 +19,16 @@ const encodings = [
 const hashResults = ref<Record<string, string>>({
   MD5: '',
   SHA1: '',
-  SHA256: '',
-  SHA224: '',
-  SHA512: '',
-  SHA384: '',
-  SHA3: '',
   RIPEMD160: '',
+  SHA224: '',
+  SHA256: '',
+  SHA384: '',
+  SHA512: '',
+  SHA3_224: '',
+  SHA3_256: '',
+  SHA3_384: '',
+  SHA3_512: '',
+  KECCAK_256: '',
 });
 
 async function computeHashes() {
@@ -32,44 +39,55 @@ async function computeHashes() {
     return;
   }
 
-  const wordArray = CryptoJS.enc.Utf8.parse(inputText.value);
+  const encoder = new TextEncoder();
+  const inputBytes = encoder.encode(inputText.value);
 
-  // All hash algorithms using crypto-js
-  hashResults.value.MD5 = formatCryptoJSHash(CryptoJS.MD5(wordArray));
-  hashResults.value.SHA1 = formatCryptoJSHash(CryptoJS.SHA1(wordArray));
-  hashResults.value.SHA256 = formatCryptoJSHash(CryptoJS.SHA256(wordArray));
-  hashResults.value.SHA224 = formatCryptoJSHash(CryptoJS.SHA224(wordArray));
-  hashResults.value.SHA512 = formatCryptoJSHash(CryptoJS.SHA512(wordArray));
-  hashResults.value.SHA384 = formatCryptoJSHash(CryptoJS.SHA384(wordArray));
-  hashResults.value.SHA3 = formatCryptoJSHash(CryptoJS.SHA3(wordArray));
-  hashResults.value.RIPEMD160 = formatCryptoJSHash(CryptoJS.RIPEMD160(wordArray));
+  hashResults.value.MD5 = formatHash(md5(inputBytes));
+  hashResults.value.SHA1 = formatHash(sha1(inputBytes));
+  hashResults.value.RIPEMD160 = formatHash(ripemd160(inputBytes));
+  hashResults.value.SHA224 = formatHash(sha224(inputBytes));
+  hashResults.value.SHA256 = formatHash(sha256(inputBytes));
+  hashResults.value.SHA384 = formatHash(sha384(inputBytes));
+  hashResults.value.SHA512 = formatHash(sha512(inputBytes));
+  hashResults.value.SHA3_224 = formatHash(sha3_224(inputBytes));
+  hashResults.value.SHA3_256 = formatHash(sha3_256(inputBytes));
+  hashResults.value.SHA3_384 = formatHash(sha3_384(inputBytes));
+  hashResults.value.SHA3_512 = formatHash(sha3_512(inputBytes));
+  hashResults.value.KECCAK_256 = formatHash(keccak_256(inputBytes));
 }
 
-function formatCryptoJSHash(hash: CryptoJS.lib.WordArray): string {
+function formatHash(hashBytes: Uint8Array): string {
   switch (encoding.value) {
     case 'hex':
-      return hash.toString(CryptoJS.enc.Hex);
+      return bytesToHex(hashBytes);
     case 'binary': {
-      const hex = hash.toString(CryptoJS.enc.Hex);
-      return hex
-        .split('')
-        .map((_c, i, arr) => {
-          if (i % 2 === 0) {
-            return parseInt(arr[i] + arr[i + 1], 16)
-              .toString(2)
-              .padStart(8, '0');
-          }
-          return '';
-        })
-        .filter((s) => s)
+      return Array.from(hashBytes)
+        .map((b) => b.toString(2).padStart(8, '0'))
         .join('');
     }
     case 'base64url':
-      return hash.toString(CryptoJS.enc.Base64url);
+      return bytesToBase64url(hashBytes);
     case 'base64':
     default:
-      return hash.toString(CryptoJS.enc.Base64);
+      return bytesToBase64(hashBytes);
   }
+}
+
+function bytesToBase64(bytes: Uint8Array): string {
+  // @ts-expect-error: toBase64 is supported on browsers.
+  if (bytes.toBase64) {
+    // @ts-expect-error: toBase64 is supported on browsers.
+    return bytes.toBase64();
+  }
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+function bytesToBase64url(bytes: Uint8Array): string {
+  return bytesToBase64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function clearInput() {
