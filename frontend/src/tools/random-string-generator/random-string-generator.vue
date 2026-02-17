@@ -107,22 +107,12 @@ watch(
   },
   { immediate: true },
 );
-
-const infoText = computed(() => {
-  return 'Generate cryptographically secure random strings with customizable character sets. Uses crypto.getRandomValues for secure random generation.';
-});
 </script>
 
 <template>
   <div class="tool-content flex justify-center">
     <div class="card bg-base-100 w-full">
       <div class="card-body">
-        <!-- Info -->
-        <div class="alert alert-info text-sm">
-          <Icon icon="solar:info-circle-bold" class="h-5 w-5" />
-          <span>{{ infoText }}</span>
-        </div>
-
         <!-- Character set toggles -->
         <div class="form-control">
           <div class="flex flex-wrap gap-4">

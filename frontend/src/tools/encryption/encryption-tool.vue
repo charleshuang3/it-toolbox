@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import { bytesToHex, hexToBytes, bytesToUtf8, utf8ToBytes, randomBytes } from '@noble/ciphers/utils.js';
 import type { Cipher, AsyncCipher } from '@noble/ciphers/utils.js';
@@ -251,22 +251,12 @@ function clearEncryptNonce() {
 }
 
 const algoOptions = Object.keys(algoConfig) as AlgoType[];
-
-const infoText = computed(() => {
-  return 'Encrypt and decrypt text using modern symmetric encryption algorithms. AES-GCM and ChaCha20-Poly1305 are recommended for most use cases due to their authenticated encryption properties.';
-});
 </script>
 
 <template>
   <div class="tool-content flex justify-center">
     <div class="card bg-base-100 w-full">
       <div class="card-body">
-        <!-- Info -->
-        <div class="alert alert-info text-sm">
-          <Icon icon="solar:info-circle-bold" class="h-5 w-5" />
-          <span>{{ infoText }}</span>
-        </div>
-
         <!-- Encrypt Section -->
         <div class="space-y-3">
           <h3 class="text-lg font-semibold flex items-center gap-2">
