@@ -46,8 +46,8 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
     <div class="card bg-base-100 w-full">
       <div class="card-body">
         <!-- Helper -->
-        <details class="collapse bg-base-100 border-base-300 border w-full">
-          <summary class="collapse-title font-semibold flex gap-1">
+        <details class="collapse bg-info w-full">
+          <summary class="collapse-title font-semibold flex gap-1 text-info-content">
             <Icon icon="solar:info-circle-bold" class="h-5 w-5" />
             Number Table (click to expand)
           </summary>

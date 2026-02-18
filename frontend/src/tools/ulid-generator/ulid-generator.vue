@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import { ulid, decodeTime } from 'ulid';
 
@@ -42,22 +42,12 @@ function getTimestamp(ulidStr: string): string {
     return 'Invalid';
   }
 }
-
-const ulidInfo = computed(() => {
-  return 'ULID is a 128-bit lexicographically sortable identifier. It encodes a timestamp (48 bits) and randomness (80 bits), making it sortable by generation time like UUID v7 but with better encoding efficiency.';
-});
 </script>
 
 <template>
   <div class="tool-content flex justify-center">
     <div class="card bg-base-100 w-full">
       <div class="card-body">
-        <!-- Info -->
-        <div class="alert alert-info text-sm">
-          <Icon icon="solar:info-circle-bold" class="h-5 w-5" />
-          <span>{{ ulidInfo }}</span>
-        </div>
-
         <!-- Count input -->
         <div class="form-control flex gap-2">
           <label class="label">
