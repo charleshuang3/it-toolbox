@@ -8,11 +8,13 @@ import (
 	"crypto/rsa"
 	"encoding/json"
 	"sort"
+	"time"
 
 	"github.com/charleshuang3/it-toolbox/backend/config"
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/jwx/v3/jwa"
 	"github.com/lestrrat-go/jwx/v3/jwk"
+	"github.com/lestrrat-go/jwx/v3/jwt"
 )
 
 var supportedAlgortihms = []string{
@@ -31,6 +33,12 @@ var supportedAlgortihms = []string{
 	"EdDSA",
 }
 
+var hmacSHAAlgortihms = []jwa.SignatureAlgorithm{
+	jwa.HS256(),
+	jwa.HS384(),
+	jwa.HS512(),
+}
+
 func SetupHandlers(r *gin.RouterGroup, config config.JWKSConfig) error {
 	handler, err := newJWKSHandler(config)
 	if err != nil {
@@ -39,6 +47,7 @@ func SetupHandlers(r *gin.RouterGroup, config config.JWKSConfig) error {
 
 	r.GET("/.well-known/openid-configuration", handler.openidConfiguration)
 	r.GET("/.well-known/jwks.json", handler.jwks)
+	r.POST("/sign-jwt", handler.signJWT)
 	return nil
 }
 
@@ -184,4 +193,83 @@ func (s *jwksHandler) jwks(c *gin.Context) {
 	}
 
 	c.Data(200, "application/json", jsonBytes)
+}
+
+type signJWTRequest struct {
+	HMACKey string         `json:"hmacKey"`
+	Claims  map[string]any `json:"claims"`
+}
+
+func (s *signJWTRequest) normalizeClaims(conf *config.JWKSConfig) {
+	now := time.Now()
+
+	// if "iss" set, overwrite it to conf.Issuer
+	s.Claims["iss"] = conf.Issuer
+
+	// if "iat" not set, set as now
+	if _, ok := s.Claims["iat"]; !ok {
+		s.Claims["iat"] = now.Unix()
+	}
+
+	// if "nbf" not set, set as now
+	if _, ok := s.Claims["nbf"]; !ok {
+		s.Claims["nbf"] = now.Unix()
+	}
+
+	// if "exp" not set, set as now + 10 min
+	if _, ok := s.Claims["exp"]; !ok {
+		s.Claims["exp"] = now.Add(10 * time.Minute).Unix()
+	}
+}
+
+func (s *jwksHandler) signJWT(c *gin.Context) {
+	var req signJWTRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	hmacKey, err := jwk.Import([]byte(req.HMACKey))
+	if err != nil {
+		c.JSON(500, gin.H{"error": "failed to import HMAC key"})
+		return
+	}
+
+	req.normalizeClaims(&s.config)
+
+	b := jwt.NewBuilder()
+	for k, v := range req.Claims {
+		b.Claim(k, v)
+	}
+	tok, err := b.Build()
+	if err != nil {
+		c.JSON(500, gin.H{"error": "failed to build token"})
+		return
+	}
+
+	tokens := map[string]string{}
+
+	// sign HS*
+	for _, alg := range hmacSHAAlgortihms {
+		signed, err := jwt.Sign(tok, jwt.WithKey(alg, hmacKey))
+		if err != nil {
+			c.JSON(500, gin.H{"error": "failed to sign token"})
+			return
+		}
+		tokens[alg.String()] = string(signed)
+	}
+
+	// sign RS* PS* ES* with cached keys
+	for _, key := range s.keys {
+		signed, err := jwt.Sign(tok, jwt.WithKey(key.algorithm, key.privateKey))
+		if err != nil {
+			c.JSON(500, gin.H{"error": "failed to sign token"})
+			return
+		}
+		tokens[key.keyID] = string(signed)
+	}
+
+	c.JSON(200, gin.H{
+		"tokens": tokens,
+	})
 }
