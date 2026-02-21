@@ -111,7 +111,7 @@ watch([inputText, encoding], computeHashes);
         <!-- Hash results -->
         <div class="space-y-2">
           <div v-for="(value, algo) in hashResults" :key="algo" class="flex items-center gap-2">
-            <div class="w-28 text-sm font-medium">{{ algo }}</div>
+            <div class="w-25 text-sm font-medium">{{ algo }}</div>
             <input type="text" :value="value" readonly class="input input-bordered flex-1" placeholder="Hash result" />
             <button class="btn btn-circle btn-sm" :disabled="!value" @click="copyToClipboard(value)">
               <Icon icon="solar:copy-bold" class="h-4 w-4" />

@@ -1,8 +1,9 @@
 import { ref, watch, computed } from 'vue';
+const THEME_LIGHT = import.meta.env.VITE_THEME_LIGHT;
+const THEME_DARK = import.meta.env.VITE_THEME_DARK;
 
-// Theme configuration - maps logical theme to actual DaisyUI theme names
-const THEME_LIGHT = 'nord';
-const THEME_DARK = 'dracula';
+// Re-export theme constants for external use
+export { THEME_LIGHT, THEME_DARK };
 
 // Singleton state - global unique (stores the actual DaisyUI theme name)
 const theme = ref<string>(THEME_LIGHT);

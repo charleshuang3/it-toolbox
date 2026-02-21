@@ -63,7 +63,7 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
         <!-- Input number -->
         <div class="form-control flex gap-2">
           <label class="label">
-            <span class="label-text text-right w-40">Input number</span>
+            <span class="label-text text-right w-30">Input number</span>
           </label>
           <input
             v-model="input"
@@ -76,7 +76,7 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
         <!-- Input base -->
         <div class="form-control mt-2 flex gap-2">
           <label class="label">
-            <span class="label-text text-right w-40">Input base</span>
+            <span class="label-text text-right w-30">Input base</span>
           </label>
           <input
             v-model="inputBase"
@@ -98,7 +98,7 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
         <!-- Output conversions -->
         <div class="form-control flex gap-2">
           <label class="label">
-            <span class="label-text text-right w-40">Binary (2)</span>
+            <span class="label-text text-right w-30">Binary (2)</span>
           </label>
           <input
             type="text"
@@ -118,7 +118,7 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
 
         <div class="form-control flex gap-2">
           <label class="label">
-            <span class="label-text text-right w-40">Octal (8)</span>
+            <span class="label-text text-right w-30">Octal (8)</span>
           </label>
           <input
             type="text"
@@ -138,7 +138,7 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
 
         <div class="form-control flex gap-2">
           <label class="label">
-            <span class="label-text text-right w-40">Decimal (10)</span>
+            <span class="label-text text-right w-30">Decimal (10)</span>
           </label>
           <input
             type="text"
@@ -158,7 +158,7 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
 
         <div class="form-control flex gap-2">
           <label class="label">
-            <span class="label-text text-right w-40">Hexadecimal (16)</span>
+            <span class="label-text text-right w-30">Hexadecimal (16)</span>
           </label>
           <input
             type="text"
@@ -178,7 +178,7 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
 
         <div class="form-control flex gap-2">
           <label class="label">
-            <span class="label-text text-right w-40">Base64 (64)</span>
+            <span class="label-text text-right w-30">Base64 (64)</span>
           </label>
           <input
             type="text"
@@ -198,7 +198,7 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
 
         <!-- Custom base -->
         <div class="flex">
-          <div class="flex items-center gap-2 w-40 mr-2">
+          <div class="flex items-center gap-2 w-30 mr-2">
             <span class="label-text">Custom:</span>
             <input
               v-model="outputBase"

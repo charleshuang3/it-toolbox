@@ -3,6 +3,7 @@ import './style.css';
 import App from './App.vue';
 import router from './router';
 
-const app = createApp(App, { title: 'IToolbox' });
+const title = import.meta.env.VITE_APP_TITLE;
+const app = createApp(App, { title: title });
 app.use(router);
 app.mount('#app');
