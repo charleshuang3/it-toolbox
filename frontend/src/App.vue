@@ -13,9 +13,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import Navbar from './components/layout/NavBar.vue';
 import Sidebar from './components/layout/SideBar.vue';
+import { useTheme } from './composables/useTheme';
+
+const { initTheme } = useTheme();
+
+onMounted(() => {
+  initTheme();
+});
 
 defineProps<{
   title: string;

@@ -23,7 +23,7 @@
 
     <div class="flex-none gap-2">
       <label class="swap swap-rotate btn btn-ghost btn-circle">
-        <input type="checkbox" class="theme-controller" value="dracula" />
+        <input type="checkbox" class="theme-controller" :checked="isDark" @change="toggleTheme" />
         <Icon icon="solar:sun-bold" class="swap-off w-6 h-6" />
         <Icon icon="solar:moon-bold" class="swap-on w-6 h-6" />
       </label>
@@ -37,6 +37,9 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { Icon } from '@iconify/vue';
 import SearchModal from '../SearchModal.vue';
+import { useTheme } from '../../composables/useTheme';
+
+const { isDark, toggleTheme } = useTheme();
 
 withDefaults(
   defineProps<{
