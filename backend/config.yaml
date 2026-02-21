@@ -1,4 +1,4 @@
 port: 8881
 debug: true
 jwks:
-  issuer: http://localhost:8888/api
+  issuer: http://localhost:8888/api/jwt

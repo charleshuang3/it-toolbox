@@ -45,9 +45,10 @@ func SetupHandlers(r *gin.RouterGroup, config config.JWKSConfig) error {
 		return err
 	}
 
-	r.GET("/.well-known/openid-configuration", handler.openidConfiguration)
-	r.GET("/.well-known/jwks.json", handler.jwks)
-	r.POST("/sign-jwt", handler.signJWT)
+	jwtGroup := r.Group("/jwt")
+	jwtGroup.GET("/.well-known/openid-configuration", handler.openidConfiguration)
+	jwtGroup.GET("/.well-known/jwks.json", handler.jwks)
+	jwtGroup.POST("/sign", handler.signJWT)
 	return nil
 }
 

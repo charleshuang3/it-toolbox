@@ -28,14 +28,14 @@ func TestOpenidConfiguration(t *testing.T) {
 	routerGroup := r.Group("/")
 
 	cfg := config.JWKSConfig{
-		Issuer: "https://test.example.com",
+		Issuer: "https://test.example.com/jwt",
 	}
 
 	err := SetupHandlers(routerGroup, cfg)
 	require.NoError(t, err)
 
 	// Create request
-	req := httptest.NewRequest(http.MethodGet, "/.well-known/openid-configuration", nil)
+	req := httptest.NewRequest(http.MethodGet, "/jwt/.well-known/openid-configuration", nil)
 	w := httptest.NewRecorder()
 
 	// Execute
@@ -48,8 +48,8 @@ func TestOpenidConfiguration(t *testing.T) {
 	err = json.Unmarshal(w.Body.Bytes(), &result)
 	require.NoError(t, err)
 
-	assert.Equal(t, "https://test.example.com", result["issuer"])
-	assert.Equal(t, "https://test.example.com/.well-known/jwks.json", result["jwks_uri"])
+	assert.Equal(t, "https://test.example.com/jwt", result["issuer"])
+	assert.Equal(t, "https://test.example.com/jwt/.well-known/jwks.json", result["jwks_uri"])
 
 	algorithms, ok := result["id_token_signing_alg_values_supported"].([]interface{})
 	require.True(t, ok)
@@ -69,7 +69,7 @@ func TestJWKS(t *testing.T) {
 	require.NoError(t, err)
 
 	// Create request
-	req := httptest.NewRequest(http.MethodGet, "/.well-known/jwks.json", nil)
+	req := httptest.NewRequest(http.MethodGet, "/jwt/.well-known/jwks.json", nil)
 	w := httptest.NewRecorder()
 
 	// Execute
@@ -279,7 +279,7 @@ func TestSignJWT(t *testing.T) {
 			require.NoError(t, err)
 
 			// Create request
-			req := httptest.NewRequest(http.MethodPost, "/sign-jwt", bytes.NewReader(bodyBytes))
+			req := httptest.NewRequest(http.MethodPost, "/jwt/sign", bytes.NewReader(bodyBytes))
 			req.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
