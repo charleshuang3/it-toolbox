@@ -150,18 +150,18 @@ watch(
 
         <!-- Length slider -->
         <div class="form-control flex gap-2">
-          <label class="label">
+          <label class="label w-30">
             <span class="label-text">Length of String</span>
           </label>
-          <input v-model.number="length" type="number" :min="minLength" :max="maxLength" class="input input-bordered" />
+          <input v-model.number="length" type="number" :min="minLength" :max="maxLength" class="input input-bordered grow" />
         </div>
 
         <!-- Number of strings to generate -->
         <div class="form-control flex gap-2">
-          <label class="label">
+          <label class="label w-30">
             <span class="label-text">Number of Strings</span>
           </label>
-          <input v-model.number="count" type="number" class="input input-bordered" :min="1" :max="maxCount" />
+          <input v-model.number="count" type="number" class="input input-bordered grow" :min="1" :max="maxCount" />
         </div>
 
         <!-- Generate button -->

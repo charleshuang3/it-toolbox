@@ -56,7 +56,7 @@ function getTimestamp(ulidStr: string): string {
           <input
             v-model.number="count"
             type="number"
-            class="input input-bordered"
+            class="input input-bordered grow"
             required
             min="1"
             :max="maxCount"
