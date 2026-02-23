@@ -26,10 +26,14 @@ const verificationError = ref<string | null>(null);
 
 const headerFields = ref<FieldDisplay[]>([]);
 const payloadFields = ref<FieldDisplay[]>([]);
+const signatureString = ref<string>('');
 
 function updateFields() {
   headerFields.value = getHeaderFields(parsedResult.value.header);
   payloadFields.value = getPayloadFields(parsedResult.value.payload);
+  // Extract signature string (third part of JWT)
+  const parts = inputToken.value.trim().split('.');
+  signatureString.value = parts.length === 3 ? parts[2] : '';
 }
 
 const isHmac = computed(() => isHmacAlgorithm(parsedResult.value.header));
@@ -200,21 +204,36 @@ onMounted(async () => {
         <!-- Only show divider between key input and signature status when key input is shown -->
         <div v-if="isHmac" class="divider"></div>
 
-        <!-- Signature verification status -->
-        <div v-if="signatureVerified !== null" class="form-control">
-          <div class="flex items-center gap-2">
-            <span class="text-sm font-medium">Signature Status:</span>
-            <div v-if="signatureVerified" class="badge badge-success gap-1">
-              <Icon icon="solar:check-circle-bold" class="h-4 w-4" />
-              Verified
-            </div>
-            <div v-else class="badge badge-error gap-1">
-              <Icon icon="solar:close-circle-bold" class="h-4 w-4" />
-              Not Verified
-            </div>
-          </div>
-          <div v-if="verificationError && !signatureVerified" class="text-sm text-error mt-1">
-            {{ verificationError }}
+        <!-- Signature verification table -->
+        <div v-if="signatureString" class="form-control">
+          <label class="label">
+            <span class="label-text font-semibold">Signature</span>
+          </label>
+          <div class="overflow-x-auto">
+            <table class="table table-zebra table-sm">
+              <thead>
+                <tr>
+                  <th class="w-32">Field</th>
+                  <th class="w-40">Meaning</th>
+                  <th>Value</th>
+                  <th class="w-32">Note</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="font-mono text-sm">
+                    <span class="text-primary">signature</span>
+                  </td>
+                  <td class="text-sm text-base-content/70">Signature String</td>
+                  <td class="font-mono text-sm break-all">{{ signatureString }}</td>
+                  <td class="text-sm">
+                    <span v-if="signatureVerified === true" class="text-success">Valid</span>
+                    <span v-else-if="signatureVerified === false" class="text-error">{{ verificationError || 'Invalid' }}</span>
+                    <span v-else class="text-base-content/30">-</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
