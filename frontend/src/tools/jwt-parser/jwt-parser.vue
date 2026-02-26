@@ -228,7 +228,9 @@ onMounted(async () => {
                   <td class="font-mono text-sm break-all">{{ signatureString }}</td>
                   <td class="text-sm">
                     <span v-if="signatureVerified === true" class="text-success">Valid</span>
-                    <span v-else-if="signatureVerified === false" class="text-error">{{ verificationError || 'Invalid' }}</span>
+                    <span v-else-if="signatureVerified === false" class="text-error">{{
+                      verificationError || 'Invalid'
+                    }}</span>
                     <span v-else class="text-base-content/30">-</span>
                   </td>
                 </tr>

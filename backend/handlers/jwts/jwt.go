@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"encoding/json"
+	"fmt"
 	"sort"
 	"time"
 
@@ -232,7 +233,7 @@ func (s *jwksHandler) signJWT(c *gin.Context) {
 
 	hmacKey, err := jwk.Import([]byte(req.HMACKey))
 	if err != nil {
-		c.JSON(500, gin.H{"error": "failed to import HMAC key"})
+		c.JSON(500, gin.H{"error": fmt.Sprintf("failed to import HMAC key: %v", err)})
 		return
 	}
 
@@ -244,7 +245,7 @@ func (s *jwksHandler) signJWT(c *gin.Context) {
 	}
 	tok, err := b.Build()
 	if err != nil {
-		c.JSON(500, gin.H{"error": "failed to build token"})
+		c.JSON(500, gin.H{"error": fmt.Sprintf("failed to build token: %v", err)})
 		return
 	}
 
@@ -254,7 +255,7 @@ func (s *jwksHandler) signJWT(c *gin.Context) {
 	for _, alg := range hmacSHAAlgortihms {
 		signed, err := jwt.Sign(tok, jwt.WithKey(alg, hmacKey))
 		if err != nil {
-			c.JSON(500, gin.H{"error": "failed to sign token"})
+			c.JSON(500, gin.H{"error": fmt.Sprintf("failed to sign token: %v", err)})
 			return
 		}
 		tokens[alg.String()] = string(signed)
@@ -264,7 +265,7 @@ func (s *jwksHandler) signJWT(c *gin.Context) {
 	for _, key := range s.keys {
 		signed, err := jwt.Sign(tok, jwt.WithKey(key.algorithm, key.privateKey))
 		if err != nil {
-			c.JSON(500, gin.H{"error": "failed to sign token"})
+			c.JSON(500, gin.H{"error": fmt.Sprintf("failed to sign token: %v", err)})
 			return
 		}
 		tokens[key.keyID] = string(signed)

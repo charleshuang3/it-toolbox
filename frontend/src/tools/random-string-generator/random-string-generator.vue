@@ -153,7 +153,13 @@ watch(
           <label class="label w-30">
             <span class="label-text">Length of String</span>
           </label>
-          <input v-model.number="length" type="number" :min="minLength" :max="maxLength" class="input input-bordered grow" />
+          <input
+            v-model.number="length"
+            type="number"
+            :min="minLength"
+            :max="maxLength"
+            class="input input-bordered grow"
+          />
         </div>
 
         <!-- Number of strings to generate -->

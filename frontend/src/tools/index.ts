@@ -2,6 +2,7 @@ import { hashText } from './hash-text/tool';
 import { uuidGenerator } from './uuid-generator/tool';
 import { ulidGenerator } from './ulid-generator/tool';
 import { jwtParser } from './jwt-parser/tool';
+import { jwtGenerator } from './jwt-generator/tool';
 import { randomStringGenerator } from './random-string-generator/tool';
 import { encryption } from './encryption/tool';
 import { bcrypt } from './bcrypt/tool';
@@ -14,6 +15,7 @@ export const allTools: Tool[] = [
   uuidGenerator,
   ulidGenerator,
   jwtParser,
+  jwtGenerator,
   randomStringGenerator,
   encryption,
   bcrypt,

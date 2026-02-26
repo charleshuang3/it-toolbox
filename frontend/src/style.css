@@ -4,3 +4,121 @@
     nord --default,
     dracula --prefersdark;
 }
+
+.jse-theme-daisyui {
+  --jse-theme: auto;
+
+  --border-color: color-mix(in oklab, var(--color-base-content) 20%, transparent);
+
+  /* overall */
+  --jse-theme-color: var(--color-base-300);
+  --jse-theme-color-highlight: var(--color-neutral-500);
+  --jse-background-color: var(--color-base-100);
+  --jse-text-color: var(--color-base-content);
+  --jse-text-color-inverse: var(--color-base-300);
+
+  /* main, menu, modal */
+  --jse-main-border: 1px solid var(--border-color);
+  --jse-menu-color: var(--color-base-content);
+  --jse-modal-background: var(--color-base-200);
+  --jse-modal-overlay-background: color-mix(in srgb, var(--color-neutral) 50%, transparent);
+  --jse-modal-code-background: var(--color-base-200);
+
+  /* tooltip */
+  --jse-tooltip-color: var(--color-base-content);
+  --jse-tooltip-background: var(--color-base-200);
+  --jse-tooltip-border: 1px solid var(--border-color);
+  --jse-tooltip-action-button-color: var(--color-base-content);
+  --jse-tooltip-action-button-background: var(--color-base-300);
+
+  /* panels */
+  --jse-panel-background: var(--color-base-200);
+  --jse-panel-background-border: 1px solid var(--border-color);
+  --jse-panel-color: var(--color-base-content);
+  --jse-panel-color-readonly: color-mix(in srgb, var(--color-base-content) 50%, transparent);
+  --jse-panel-border: 1px solid var(--border-color);
+  --jse-panel-button-color-highlight: var(--color-base-content);
+  --jse-panel-button-background-highlight: var(--color-base-300);
+
+  /* navigation bar */
+  --jse-navigation-bar-background: var(--color-base-300);
+  --jse-navigation-bar-background-highlight: var(--color-base-content);
+  --jse-navigation-bar-dropdown-color: var(--color-base-content);
+
+  /* context menu */
+  --jse-context-menu-background: var(--color-base-200);
+  --jse-context-menu-background-highlight: var(--color-base-300);
+  --jse-context-menu-separator-color: var(--color-base-300);
+  --jse-context-menu-color: var(--color-base-content);
+  --jse-context-menu-pointer-background: var(--color-base-300);
+  --jse-context-menu-pointer-background-highlight: var(--color-base-content);
+  --jse-context-menu-pointer-color: var(--color-base-content);
+
+  /* JSON contents */
+  --jse-key-color: var(--color-primary);
+  --jse-value-color: var(--color-base-content);
+  --jse-value-color-number: var(--color-secondary);
+  --jse-value-color-boolean: var(--color-accent);
+  --jse-value-color-null: var(--color-error);
+  --jse-value-color-string: var(--color-info);
+  --jse-value-color-url: var(--color-success);
+  --jse-delimiter-color: var(--color-base-content);
+  --jse-edit-outline: 2px solid var(--color-primary);
+
+  /* selection / hover */
+  --jse-selection-background-color: var(--color-base-300);
+  --jse-selection-background-inactive-color: var(--color-base-200);
+  --jse-hover-background-color: var(--color-base-200);
+  --jse-active-line-background-color: color-mix(in srgb, var(--color-base-content) 8%, transparent);
+  --jse-search-match-background-color: var(--color-base-300);
+
+  /* collapsed items */
+  --jse-collapsed-items-background-color: var(--color-base-200);
+  --jse-collapsed-items-selected-background-color: var(--color-base-300);
+  --jse-collapsed-items-link-color: var(--color-base-content);
+  --jse-collapsed-items-link-color-highlight: var(--color-primary);
+
+  /* search highlight */
+  --jse-search-match-color: var(--color-primary-content);
+  --jse-search-match-outline: 1px solid var(--color-primary);
+  --jse-search-match-active-color: var(--color-primary);
+  --jse-search-match-active-outline: 1px solid var(--color-primary);
+
+  /* inline tags */
+  --jse-tag-background: var(--color-base-300);
+  --jse-tag-color: var(--color-base-content);
+
+  /* table */
+  --jse-table-header-background: var(--color-base-200);
+  --jse-table-header-background-highlight: var(--color-base-300);
+  --jse-table-row-odd-background: color-mix(in srgb, var(--color-base-content) 6%, transparent);
+
+  /* modal controls */
+  --jse-input-background: var(--color-base-200);
+  --jse-input-border: 1px solid var(--border-color);
+  --jse-button-background: var(--color-primary);
+  --jse-button-background-highlight: var(--color-primary);
+  --jse-button-color: var(--color-primary-content);
+  --jse-button-secondary-background: var(--color-base-300);
+  --jse-button-secondary-background-highlight: var(--color-base-content);
+  --jse-button-secondary-background-disabled: var(--color-base-300);
+  --jse-button-secondary-color: var(--color-base-content);
+  --jse-a-color: var(--color-primary);
+  --jse-a-color-highlight: var(--color-primary);
+
+  /* svelte-select */
+  --jse-svelte-select-background: var(--color-base-200);
+  --jse-svelte-select-border: 1px solid var(--border-color);
+  --list-background: var(--color-base-200);
+  --item-hover-bg: var(--color-base-300);
+  --multi-item-bg: var(--color-base-300);
+  --input-color: var(--color-base-content);
+  --multi-clear-bg: var(--color-base-content);
+  --multi-item-clear-icon-color: var(--color-base-content);
+  --multi-item-outline: 1px solid var(--color-base-300);
+  --list-shadow: 0 2px 8px color-mix(in srgb, var(--color-neutral) 40%, transparent);
+
+  /* color picker */
+  --jse-color-picker-background: var(--color-base-200);
+  --jse-color-picker-border-box-shadow: var(--color-base-300) 0 0 0 1px;
+}
