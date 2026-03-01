@@ -233,52 +233,46 @@ describe('jwt-utils', () => {
     });
 
     it('should verify valid HMAC signature', async () => {
-      const result = await verifySignature(testToken, 'test-secret-key', { alg: 'HS256' });
+      const result = await verifySignature(testToken, 'test-secret-key', { alg: 'HS256' }, null);
       // compactVerify only checks signature, not expiration
       expect(result.verified).toBe(true);
       expect(result.error).toBeNull();
     });
 
     it('should return false for invalid HMAC signature', async () => {
-      const result = await verifySignature(testToken, 'wrong-key', { alg: 'HS256' });
+      const result = await verifySignature(testToken, 'wrong-key', { alg: 'HS256' }, null);
       expect(result.verified).toBe(false);
       expect(result.error).toBe('Signature invalid');
     });
 
     it('should return null verified for empty token', async () => {
-      const result = await verifySignature('', 'some-key', { alg: 'HS256' });
+      const result = await verifySignature('', 'some-key', { alg: 'HS256' }, null);
       expect(result.verified).toBeNull();
       expect(result.error).toBeNull();
     });
 
     it('should return error when HMAC but no secret key provided', async () => {
-      const result = await verifySignature(testToken, '', { alg: 'HS256' });
+      const result = await verifySignature(testToken, '', { alg: 'HS256' }, null);
       expect(result.verified).toBe(false);
       expect(result.error).toBe('Require key');
     });
 
-    it('should return error for non-HMAC algorithms (not implemented)', async () => {
-      const result = await verifySignature(testToken, '', { alg: 'RS256' });
-      expect(result.verified).toBe(false);
-      expect(result.error).toBe('unimplemented');
-    });
-
     it('should verify signature even for expired token', async () => {
       // The token has an expired timestamp, but compactVerify only checks signature
-      const result = await verifySignature(testToken, 'test-secret-key', { alg: 'HS256' });
+      const result = await verifySignature(testToken, 'test-secret-key', { alg: 'HS256' }, null);
       // Signature should still be valid, expiration is checked separately in getPayloadFields
       expect(result.verified).toBe(true);
       expect(result.error).toBeNull();
     });
 
     it('should handle whitespace-only secret key', async () => {
-      const result = await verifySignature(testToken, '   ', { alg: 'HS256' });
+      const result = await verifySignature(testToken, '   ', { alg: 'HS256' }, null);
       expect(result.verified).toBe(false);
       expect(result.error).toBe('Require key');
     });
 
     it('should handle whitespace token', async () => {
-      const result = await verifySignature('  ', 'test-secret-key', { alg: 'HS256' });
+      const result = await verifySignature('  ', 'test-secret-key', { alg: 'HS256' }, null);
       expect(result.verified).toBeNull();
       expect(result.error).toBeNull();
     });

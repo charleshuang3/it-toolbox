@@ -1,4 +1,4 @@
-import { decodeJwt, compactVerify, SignJWT } from 'jose';
+import { decodeJwt, compactVerify, SignJWT, jwtVerify, createRemoteJWKSet } from 'jose';
 
 export interface JwtHeader {
   alg?: string;
@@ -153,10 +153,26 @@ export function parseJwt(token: string): ParsedResult {
   return result;
 }
 
+interface OpenIdConfig {
+  jwks_uri: string;
+  issuer: string;
+  [key: string]: unknown;
+}
+
+async function fetchOpenIdConfig(issuer: string): Promise<OpenIdConfig> {
+  const configUrl = new URL('.well-known/openid-configuration', issuer.endsWith('/') ? issuer : issuer + '/');
+  const response = await fetch(configUrl.toString());
+  if (!response.ok) {
+    throw new Error(`Failed to fetch OpenID configuration: ${response.statusText}`);
+  }
+  return response.json();
+}
+
 export async function verifySignature(
   token: string,
   secretKey: string,
   header: JwtHeader | null,
+  payload: JwtPayload | null,
 ): Promise<{ verified: boolean | null; error: string | null }> {
   if (!token.trim()) {
     return { verified: null, error: null };
@@ -168,22 +184,46 @@ export async function verifySignature(
     return { verified: false, error: 'Require key' };
   }
 
-  if (!isHmac) {
-    // TODO: support RS256 and others.
-    return { verified: false, error: 'unimplemented' };
+  if (isHmac) {
+    try {
+      const alg = header?.alg || 'HS256';
+      const secret = new TextEncoder().encode(secretKey);
+
+      await compactVerify(token.trim(), secret, {
+        algorithms: [alg],
+      });
+
+      return { verified: true, error: null };
+    } catch {
+      return { verified: false, error: 'Signature invalid' };
+    }
+  }
+
+  if (!payload?.iss) {
+    return { verified: false, error: 'Missing issuer (iss) claim' };
   }
 
   try {
-    const alg = header?.alg || 'HS256';
-    const secret = new TextEncoder().encode(secretKey);
+    const openIdConfig = await fetchOpenIdConfig(payload.iss);
+    const jwksUrl = new URL(openIdConfig.jwks_uri);
+    const JWKS = createRemoteJWKSet(jwksUrl);
 
-    await compactVerify(token.trim(), secret, {
-      algorithms: [alg],
-    });
+    const options: Record<string, unknown> = {};
+    if (payload.iss) {
+      options.issuer = payload.iss;
+    }
+    if (payload.aud) {
+      options.audience = payload.aud;
+    }
+
+    await jwtVerify(token.trim(), JWKS, options);
 
     return { verified: true, error: null };
-  } catch {
-    return { verified: false, error: 'Signature invalid' };
+  } catch (error) {
+    if (error instanceof Error) {
+      return { verified: false, error: error.message };
+    }
+    return { verified: false, error: 'Signature verification failed' };
   }
 }
 

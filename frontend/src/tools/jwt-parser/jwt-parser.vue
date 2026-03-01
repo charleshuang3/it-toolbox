@@ -53,7 +53,12 @@ function clearInput() {
 watch(inputToken, () => {
   parsedResult.value = parseJwt(inputToken.value);
   updateFields();
-  const result = verifySignature(inputToken.value, secretKey.value, parsedResult.value.header);
+  const result = verifySignature(
+    inputToken.value,
+    secretKey.value,
+    parsedResult.value.header,
+    parsedResult.value.payload,
+  );
   result.then((r) => {
     signatureVerified.value = r.verified;
     verificationError.value = r.error;
@@ -61,7 +66,12 @@ watch(inputToken, () => {
 });
 
 watch([secretKey], () => {
-  const result = verifySignature(inputToken.value, secretKey.value, parsedResult.value.header);
+  const result = verifySignature(
+    inputToken.value,
+    secretKey.value,
+    parsedResult.value.header,
+    parsedResult.value.payload,
+  );
   result.then((r) => {
     signatureVerified.value = r.verified;
     verificationError.value = r.error;
@@ -78,7 +88,12 @@ onMounted(async () => {
   });
   parsedResult.value = parseJwt(inputToken.value);
   updateFields();
-  const result = verifySignature(inputToken.value, secretKey.value, parsedResult.value.header);
+  const result = verifySignature(
+    inputToken.value,
+    secretKey.value,
+    parsedResult.value.header,
+    parsedResult.value.payload,
+  );
   result.then((r) => {
     signatureVerified.value = r.verified;
     verificationError.value = r.error;
