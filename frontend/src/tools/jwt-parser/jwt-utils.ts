@@ -1,4 +1,4 @@
-import { decodeJwt, compactVerify, SignJWT, jwtVerify, createRemoteJWKSet } from 'jose';
+import { decodeJwt, compactVerify, SignJWT, createRemoteJWKSet } from 'jose';
 
 export interface JwtHeader {
   alg?: string;
@@ -216,7 +216,7 @@ export async function verifySignature(
       options.audience = payload.aud;
     }
 
-    await jwtVerify(token.trim(), JWKS, options);
+    await compactVerify(token.trim(), JWKS, options);
 
     return { verified: true, error: null };
   } catch (error) {
