@@ -11,9 +11,10 @@ type JWKSConfig struct {
 }
 
 type Config struct {
-	Port  int        `yaml:"port"`
-	Debug bool       `yaml:"debug"`
-	JWKS  JWKSConfig `yaml:"jwks"`
+	Port             int        `yaml:"port"`
+	Debug            bool       `yaml:"debug"`
+	FrontendFilePath string     `yaml:"frontend_file_path"`
+	JWKS             JWKSConfig `yaml:"jwks"`
 }
 
 func LoadConfig(path string) (*Config, error) {

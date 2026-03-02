@@ -50,8 +50,7 @@ func main() {
 	r := gin.Default()
 
 	// API routes
-	api := r.Group("/api")
-	if err := handlers.SetupHandlers(api, conf); err != nil {
+	if err := handlers.SetupHandlers(r, conf); err != nil {
 		log.Fatalf("Failed to setup JWKS handler: %v", err)
 	}
 
