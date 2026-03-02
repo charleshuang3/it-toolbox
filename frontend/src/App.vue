@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-base-200 flex flex-col">
+  <div class="h-screen bg-base-200 flex flex-col overflow-hidden">
     <Navbar :title="title" @toggle-sidebar="isSidebarCollapsed = !isSidebarCollapsed" />
 
     <div class="flex flex-1 overflow-hidden">
