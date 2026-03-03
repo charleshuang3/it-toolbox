@@ -1,0 +1,33 @@
+name: Test on Push
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.26'
+
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 25
+
+    - name: Run backend tests
+      run: |
+        go test -v ./...
+      working-directory: ./backend
+
+    - name: Run frontend formatter check, linter and tests
+      run: |
+        npm ci
+        npx run check
+        npx test run
+      working-directory: ./frontend
