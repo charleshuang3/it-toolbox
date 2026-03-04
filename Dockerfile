@@ -56,8 +56,5 @@ COPY --from=builder-backend /build/backend/it-toolbox /app/it-toolbox
 # Copy frontend build from builder stage
 COPY --from=builder-frontend /build/frontend/dist /app/frontend
 
-# Create a directory for config (user will mount config.yaml here)
-RUN mkdir -p /app/config
-
-# Default command - run the backend with config file mounted at /app/config/config.yaml
-CMD ["/app/it-toolbox", "-c", "/app/config/config.yaml"]
+# Default command - run the backend with simple config
+CMD ["/app/it-toolbox"]
