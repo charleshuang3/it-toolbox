@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import { hashSync, compareSync } from 'bcrypt-ts';
+import LabelWithActions from '../../components/LabelWithActions.vue';
 
 const input = ref('');
 const saltCount = ref(10);
@@ -55,12 +56,11 @@ function swapToVerify() {
 
         <!-- Input string -->
         <div class="form-control">
-          <label class="label justify-between w-full">
-            <span class="label-text">Your string</span>
+          <LabelWithActions label="Your string">
             <button class="btn btn-ghost btn-sm" :disabled="!input" @click="clearInput">
               <Icon icon="solar:trash-bin-trash-bold" class="h-4 w-4" />
             </button>
-          </label>
+          </LabelWithActions>
           <input
             v-model="input"
             type="text"
@@ -101,12 +101,11 @@ function swapToVerify() {
 
         <!-- Compare string -->
         <div class="form-control">
-          <label class="label justify-between w-full">
-            <span class="label-text">Your string</span>
+          <LabelWithActions label="Your string">
             <button class="btn btn-ghost btn-sm" :disabled="!compareString" @click="clearCompareString">
               <Icon icon="solar:trash-bin-trash-bold" class="h-4 w-4" />
             </button>
-          </label>
+          </LabelWithActions>
           <input
             v-model="compareString"
             type="text"
@@ -117,12 +116,11 @@ function swapToVerify() {
 
         <!-- Compare hash -->
         <div class="form-control">
-          <label class="label justify-between w-full">
-            <span class="label-text">Your hash</span>
+          <LabelWithActions label="Your hash">
             <button class="btn btn-ghost btn-sm" :disabled="!compareHash" @click="clearCompareHash">
               <Icon icon="solar:trash-bin-trash-bold" class="h-4 w-4" />
             </button>
-          </label>
+          </LabelWithActions>
           <input
             v-model="compareHash"
             type="text"

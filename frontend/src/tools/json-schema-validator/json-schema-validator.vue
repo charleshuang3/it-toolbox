@@ -10,6 +10,7 @@ import {
   type InputFormat,
 } from './json-schema-validator';
 import { useTheme } from '../../composables/useTheme';
+import LabelWithActions from '../../components/LabelWithActions.vue';
 
 // CodeMirror imports
 import CodeMirror from 'vue-codemirror6';
@@ -209,12 +210,11 @@ watch(schemaInputMode, (newMode) => {
 
           <!-- Data Input -->
           <div class="form-control">
-            <label class="label flex">
-              <span class="label-text font-medium">Data</span>
-              <button class="btn btn-xs btn-ghost ml-auto" @click="copyToClipboard(jsonInput)" title="Copy">
+            <LabelWithActions label="Data">
+              <button class="btn btn-xs btn-ghost" @click="copyToClipboard(jsonInput)" title="Copy">
                 <Icon icon="solar:copy-bold" class="h-3 w-3" />
               </button>
-            </label>
+            </LabelWithActions>
             <div
               class="border border-base-content/20 rounded-btn overflow-hidden focus-within:border-primary focus-within:ring-1 focus-within:ring-primary h-64"
             >

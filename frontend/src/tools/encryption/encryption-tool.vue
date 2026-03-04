@@ -4,6 +4,7 @@ import { Icon } from '@iconify/vue';
 import { bytesToHex, hexToBytes, bytesToUtf8, utf8ToBytes, randomBytes } from '@noble/ciphers/utils.js';
 import type { Cipher, AsyncCipher } from '@noble/ciphers/utils.js';
 import { hashText } from '../../utils/hash';
+import LabelWithActions from '../../components/LabelWithActions.vue';
 
 type AlgoType = 'AES-GCM' | 'AES-CBC' | 'AES-CTR' | 'ChaCha20-Poly1305';
 
@@ -289,34 +290,25 @@ const algoOptions = Object.keys(algoConfig) as AlgoType[];
 
           <!-- Nonce (optional) -->
           <div class="form-control">
-            <div class="flex flex-row">
-              <label class="label">
-                <span class="label-text">Nonce (optional, hex)</span>
-              </label>
-              <label class="label">
-                <button
-                  v-if="encryptNonce"
-                  class="btn btn-xs btn-ghost ml-1"
-                  @click="copyToClipboard(encryptNonce)"
-                  title="Copy nonce"
-                >
-                  <Icon icon="solar:copy-bold" class="h-3 w-3" />
-                  Copy
-                </button>
-              </label>
-              <label class="label">
-                <button class="btn btn-xs btn-ghost" @click="generateEncryptNonce" title="Generate random nonce">
-                  <Icon icon="solar:refresh-bold" class="h-3 w-3" />
-                  Generate
-                </button>
-              </label>
-              <label class="label">
-                <button class="btn btn-xs btn-ghost" @click="clearEncryptNonce" title="Clear nonce">
-                  <Icon icon="solar:trash-bin-trash-bold" class="h-3 w-3" />
-                  Clear
-                </button>
-              </label>
-            </div>
+            <LabelWithActions label="Nonce (optional, hex)">
+              <button
+                v-if="encryptNonce"
+                class="btn btn-xs btn-ghost"
+                @click="copyToClipboard(encryptNonce)"
+                title="Copy nonce"
+              >
+                <Icon icon="solar:copy-bold" class="h-3 w-3" />
+                Copy
+              </button>
+              <button class="btn btn-xs btn-ghost" @click="generateEncryptNonce" title="Generate random nonce">
+                <Icon icon="solar:refresh-bold" class="h-3 w-3" />
+                Generate
+              </button>
+              <button class="btn btn-xs btn-ghost" @click="clearEncryptNonce" title="Clear nonce">
+                <Icon icon="solar:trash-bin-trash-bold" class="h-3 w-3" />
+                Clear
+              </button>
+            </LabelWithActions>
             <input
               v-model="encryptNonce"
               type="text"
@@ -327,13 +319,12 @@ const algoOptions = Object.keys(algoConfig) as AlgoType[];
 
           <!-- Output -->
           <div class="form-control">
-            <label class="label">
-              <span class="label-text">Encrypted text (hex)</span>
+            <LabelWithActions label="Encrypted text (hex)">
               <button v-if="encryptOutput" class="btn btn-xs btn-ghost" @click="copyToClipboard(encryptOutput)">
                 <Icon icon="solar:copy-bold" class="h-4 w-4" />
                 Copy
               </button>
-            </label>
+            </LabelWithActions>
             <textarea
               :value="encryptOutput"
               class="textarea textarea-bordered font-mono text-sm w-full"
@@ -414,13 +405,12 @@ const algoOptions = Object.keys(algoConfig) as AlgoType[];
 
           <!-- Output -->
           <div class="form-control">
-            <label class="label">
-              <span class="label-text">Decrypted text</span>
+            <LabelWithActions label="Decrypted text">
               <button v-if="decryptOutput" class="btn btn-xs btn-ghost" @click="copyToClipboard(decryptOutput)">
                 <Icon icon="solar:copy-bold" class="h-4 w-4" />
                 Copy
               </button>
-            </label>
+            </LabelWithActions>
             <textarea
               :value="decryptOutput"
               class="textarea textarea-bordered font-mono text-sm w-full"

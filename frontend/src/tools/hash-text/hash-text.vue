@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import { hashText, type HashType } from '../../utils/hash';
 import { formatBytes, OutputEncoding } from '../../utils/bytes-formatter';
+import LabelWithActions from '../../components/LabelWithActions.vue';
 
 const inputText = ref('');
 const encoding = ref('hex');
@@ -76,12 +77,11 @@ watch([inputText, encoding], computeHashes);
       <div class="card-body">
         <!-- Input textarea -->
         <div class="form-control">
-          <label class="label justify-between w-full" for="input-text">
-            <span class="label-text">Your text to hash:</span>
+          <LabelWithActions label="Your text to hash:">
             <button class="btn btn-ghost btn-sm" :disabled="!inputText" @click="clearInput">
               <Icon icon="solar:trash-bin-trash-bold" class="h-4 w-4" />
             </button>
-          </label>
+          </LabelWithActions>
           <textarea
             id="input-text"
             v-model="inputText"

@@ -99,11 +99,14 @@ describe('format-converter', () => {
       });
 
       it('should parse JSON5 with comments', () => {
-        const result = parseInput(`{
+        const result = parseInput(
+          `{
           name: 'test',
           // This is a comment
           value: 123
-        }`, 'json5');
+        }`,
+          'json5',
+        );
         expect(result.error).toBeNull();
         expect(result.data).toEqual({ name: 'test', value: 123 });
       });

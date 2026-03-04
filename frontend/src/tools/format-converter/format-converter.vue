@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
 import { Icon } from '@iconify/vue';
-import {
-  convert,
-  getSampleData,
-  formatLabels,
-  type DataFormat,
-} from './format-converter';
+import { convert, getSampleData, formatLabels, type DataFormat } from './format-converter';
 import { useTheme } from '../../composables/useTheme';
+import LabelWithActions from '../../components/LabelWithActions.vue';
 
 // CodeMirror imports
 import CodeMirror from 'vue-codemirror6';
@@ -33,7 +29,7 @@ const formatOptions = computed(() =>
   formats.map((format) => ({
     value: format,
     label: formatLabels[format],
-  }))
+  })),
 );
 
 // Dynamically compute CodeMirror extensions based on the selected input format
@@ -157,11 +153,7 @@ performConversion();
 
             <!-- Swap Button -->
             <div class="flex items-end">
-              <button
-                class="btn btn-circle btn-sm btn-ghost"
-                @click="swapFormats"
-                title="Swap formats"
-              >
+              <button class="btn btn-circle btn-sm btn-ghost" @click="swapFormats" title="Swap formats">
                 <Icon icon="eva:swap-outline" class="h-5 w-5" />
               </button>
             </div>
@@ -183,14 +175,12 @@ performConversion();
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Input -->
             <div class="form-control">
-              <label class="label flex">
-                <span class="label-text font-medium">Input ({{ formatLabels[inputFormat] }})</span>
-                <div class="flex gap-1 ml-auto">
-                  <button class="btn btn-xs btn-ghost" @click="copyToClipboard(input)" title="Copy">
-                    <Icon icon="solar:copy-bold" class="h-3 w-3" />
-                  </button>
-                </div>
-              </label>
+              <LabelWithActions>
+                <template #label>Input ({{ formatLabels[inputFormat] }})</template>
+                <button class="btn btn-xs btn-ghost" @click="copyToClipboard(input)" title="Copy">
+                  <Icon icon="solar:copy-bold" class="h-3 w-3" />
+                </button>
+              </LabelWithActions>
               <div
                 class="border border-base-content/20 rounded-btn overflow-hidden focus-within:border-primary focus-within:ring-1 focus-within:ring-primary h-96"
               >
@@ -207,19 +197,12 @@ performConversion();
 
             <!-- Output -->
             <div class="form-control">
-              <label class="label flex">
-                <span class="label-text font-medium">Output ({{ formatLabels[outputFormat] }})</span>
-                <div class="flex gap-1 ml-auto">
-                  <button
-                    class="btn btn-xs btn-ghost"
-                    @click="copyToClipboard(output)"
-                    title="Copy"
-                    :disabled="!output"
-                  >
-                    <Icon icon="solar:copy-bold" class="h-3 w-3" />
-                  </button>
-                </div>
-              </label>
+              <LabelWithActions>
+                <template #label>Output ({{ formatLabels[outputFormat] }})</template>
+                <button class="btn btn-xs btn-ghost" @click="copyToClipboard(output)" title="Copy" :disabled="!output">
+                  <Icon icon="solar:copy-bold" class="h-3 w-3" />
+                </button>
+              </LabelWithActions>
               <div
                 class="border border-base-content/20 rounded-btn overflow-hidden bg-base-200 h-96"
                 :class="{ 'border-error': error }"

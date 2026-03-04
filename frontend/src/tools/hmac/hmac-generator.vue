@@ -3,6 +3,7 @@ import { ref, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import { hmacText, type HashType } from '../../utils/hash';
 import { formatBytes, type OutputEncoding } from '../../utils/bytes-formatter';
+import LabelWithActions from '../../components/LabelWithActions.vue';
 
 const hashFunctionValues: HashType[] = ['md5', 'sha1', 'sha256', 'sha384', 'sha512'];
 
@@ -52,12 +53,11 @@ function clearInputs() {
       <div class="card-body">
         <!-- Plain text input -->
         <div class="form-control">
-          <label class="label justify-between w-full">
-            <span class="label-text">Plain text to compute the HMAC</span>
+          <LabelWithActions label="Plain text to compute the HMAC">
             <button class="btn btn-ghost btn-sm" :disabled="!plainText" @click="plainText = ''">
               <Icon icon="solar:trash-bin-trash-bold" class="h-4 w-4" />
             </button>
-          </label>
+          </LabelWithActions>
           <textarea
             v-model="plainText"
             class="textarea textarea-bordered h-24 w-full"
@@ -71,12 +71,11 @@ function clearInputs() {
 
         <!-- Secret key input -->
         <div class="form-control">
-          <label class="label justify-between w-full">
-            <span class="label-text">Secret key</span>
+          <LabelWithActions label="Secret key">
             <button class="btn btn-ghost btn-sm" :disabled="!secret" @click="secret = ''">
               <Icon icon="solar:trash-bin-trash-bold" class="h-4 w-4" />
             </button>
-          </label>
+          </LabelWithActions>
           <input
             v-model="secret"
             type="text"
@@ -112,13 +111,12 @@ function clearInputs() {
 
         <!-- Result -->
         <div class="form-control">
-          <label class="label justify-between w-full">
-            <span class="label-text">HMAC result</span>
+          <LabelWithActions label="HMAC result">
             <button v-if="hmacResult" class="btn btn-ghost btn-sm" @click="copyToClipboard(hmacResult)">
               <Icon icon="solar:copy-bold" class="h-4 w-4" />
               Copy
             </button>
-          </label>
+          </LabelWithActions>
           <textarea
             :value="hmacResult"
             class="textarea textarea-bordered font-mono text-sm w-full"

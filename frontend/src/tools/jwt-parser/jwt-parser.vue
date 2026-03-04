@@ -11,6 +11,7 @@ import {
   type ParsedResult,
   type FieldDisplay,
 } from './jwt-utils';
+import LabelWithActions from '../../components/LabelWithActions.vue';
 
 const inputToken = ref('');
 const secretKey = ref('this-is-a-safe-key');
@@ -107,12 +108,11 @@ onMounted(async () => {
       <div class="card-body">
         <!-- Input textarea -->
         <div class="form-control">
-          <label class="label justify-between w-full" for="input-token">
-            <span class="label-text">Your JWT token:</span>
+          <LabelWithActions label="Your JWT token:">
             <button class="btn btn-ghost btn-sm" :disabled="!inputToken" @click="clearInput">
               <Icon icon="solar:trash-bin-trash-bold" class="h-4 w-4" />
             </button>
-          </label>
+          </LabelWithActions>
           <textarea
             id="input-token"
             v-model="inputToken"

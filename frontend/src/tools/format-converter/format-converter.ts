@@ -355,11 +355,7 @@ function toXmlString(data: unknown, rootName = 'root'): string {
 /**
  * Convert data from one format to another
  */
-export function convert(
-  input: string,
-  fromFormat: DataFormat,
-  toFormat: DataFormat,
-): ConversionResult {
+export function convert(input: string, fromFormat: DataFormat, toFormat: DataFormat): ConversionResult {
   // Parse input
   const parseResult = parseInput(input, fromFormat);
   if (parseResult.error) {
