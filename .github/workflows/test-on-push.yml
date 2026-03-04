@@ -28,6 +28,6 @@ jobs:
     - name: Run frontend formatter check, linter and tests
       run: |
         npm ci
-        npx run check
-        npx test run
+        npm run lint
+        npm test run
       working-directory: ./frontend
