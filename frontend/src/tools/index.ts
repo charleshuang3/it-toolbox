@@ -10,6 +10,7 @@ import { hmacTool } from './hmac/tool';
 import { intBaseConverter } from './int-base-converter/tool';
 import { jsonSchemaValidator } from './json-schema-validator/tool';
 import { formatConverter } from './format-converter/tool';
+import { jsonViewer } from './json-viewer/tool';
 import { Tool } from './tools';
 
 export const allTools: Tool[] = [
@@ -25,6 +26,7 @@ export const allTools: Tool[] = [
   intBaseConverter,
   jsonSchemaValidator,
   formatConverter,
+  jsonViewer,
 ];
 
 const byCategory: Record<string, Tool[]> = {};
