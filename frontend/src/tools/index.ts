@@ -9,6 +9,7 @@ import { bcrypt } from './bcrypt/tool';
 import { hmacTool } from './hmac/tool';
 import { intBaseConverter } from './int-base-converter/tool';
 import { jsonSchemaValidator } from './json-schema-validator/tool';
+import { formatConverter } from './format-converter/tool';
 import { Tool } from './tools';
 
 export const allTools: Tool[] = [
@@ -23,6 +24,7 @@ export const allTools: Tool[] = [
   hmacTool,
   intBaseConverter,
   jsonSchemaValidator,
+  formatConverter,
 ];
 
 const byCategory: Record<string, Tool[]> = {};
