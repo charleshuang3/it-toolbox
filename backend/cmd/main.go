@@ -31,13 +31,19 @@ func main() {
 		confFile = *configFile
 	}
 
+	var conf *config.Config
+	var err error
 	if confFile == "" {
-		log.Fatal("No config file specified")
+		conf = config.Simple()
+	} else {
+		conf, err = config.LoadConfig(confFile)
+		if err != nil {
+			log.Fatalf("Failed to load config: %v", err)
+		}
 	}
 
-	conf, err := config.LoadConfig(confFile)
-	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+	if err := conf.Validate(); err != nil {
+		log.Fatalf("Invalid config: %v", err)
 	}
 
 	if conf.Debug {
