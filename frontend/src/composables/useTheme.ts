@@ -1,4 +1,6 @@
 import { ref, watch, computed } from 'vue';
+import { ayuLight } from 'thememirror';
+import { dracula } from 'thememirror';
 const THEME_LIGHT = import.meta.env.VITE_THEME_LIGHT;
 const THEME_DARK = import.meta.env.VITE_THEME_DARK;
 
@@ -46,6 +48,11 @@ export function useTheme() {
     theme.value = theme.value === THEME_LIGHT ? THEME_DARK : THEME_LIGHT;
   };
 
+  // Get the CodeMirror theme based on current dark mode
+  const codeMirrorTheme = () => {
+    return isDark.value ? dracula : ayuLight;
+  };
+
   return {
     theme,
     isDark,
@@ -53,5 +60,6 @@ export function useTheme() {
     initTheme,
     THEME_LIGHT,
     THEME_DARK,
+    codeMirrorTheme,
   };
 }

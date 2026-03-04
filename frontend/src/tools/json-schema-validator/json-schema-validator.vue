@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import {
   sampleSchema,
@@ -9,6 +9,17 @@ import {
   type ValidationResult,
   type InputFormat,
 } from './json-schema-validator';
+import { useTheme } from '../../composables/useTheme';
+
+// CodeMirror imports
+import CodeMirror from 'vue-codemirror6';
+import { json } from '@codemirror/lang-json';
+import { json5 } from 'codemirror-json5';
+import { StreamLanguage } from '@codemirror/language';
+import { toml } from '@codemirror/legacy-modes/mode/toml';
+import { yaml } from '@codemirror/lang-yaml';
+
+const { codeMirrorTheme } = useTheme();
 
 const jsonInput = ref(getSampleData('json'));
 const schemaInput = ref(sampleSchema);
@@ -22,6 +33,29 @@ const inputFormats: { value: InputFormat; label: string }[] = [
   { value: 'yaml', label: 'YAML' },
   { value: 'toml', label: 'TOML' },
 ];
+
+// Dynamically compute CodeMirror extensions based on the selected input format
+const dataExtensions = computed(() => {
+  const theme = codeMirrorTheme();
+  switch (inputFormat.value) {
+    case 'yaml':
+      return [theme, yaml()];
+    case 'toml':
+      return [theme, StreamLanguage.define(toml)];
+    case 'json':
+      return [theme, json()];
+    case 'json5':
+      return [theme, json5()];
+  }
+  // never reached
+  return [];
+});
+
+// The schema is always strictly JSON
+const schemaExtensions = computed(() => {
+  const theme = codeMirrorTheme();
+  return [theme, json()];
+});
 
 // Full validation function that handles parsing both JSON and Schema
 function validateJson() {
@@ -85,11 +119,18 @@ function copyToClipboard(text: string) {
                 <Icon icon="solar:copy-bold" class="h-3 w-3" />
               </button>
             </label>
-            <textarea
-              v-model="jsonInput"
-              class="textarea textarea-bordered font-mono text-sm w-full h-64"
-              :placeholder="'Enter ' + inputFormat.toUpperCase() + ' data to validate'"
-            ></textarea>
+            <div
+              class="border border-base-content/20 rounded-btn overflow-hidden focus-within:border-primary focus-within:ring-1 focus-within:ring-primary h-64"
+            >
+              <CodeMirror
+                v-model="jsonInput"
+                :extensions="dataExtensions"
+                basic
+                tab
+                :tab-size="2"
+                class="h-full w-full text-sm"
+              />
+            </div>
           </div>
 
           <!-- Schema Input -->
@@ -100,11 +141,18 @@ function copyToClipboard(text: string) {
                 <Icon icon="solar:copy-bold" class="h-3 w-3" />
               </button>
             </label>
-            <textarea
-              v-model="schemaInput"
-              class="textarea textarea-bordered font-mono text-sm w-full h-64"
-              placeholder="Enter JSON Schema"
-            ></textarea>
+            <div
+              class="border border-base-content/20 rounded-btn overflow-hidden focus-within:border-primary focus-within:ring-1 focus-within:ring-primary h-64"
+            >
+              <CodeMirror
+                v-model="schemaInput"
+                :extensions="schemaExtensions"
+                basic
+                tab
+                :tab-size="2"
+                class="h-full w-full text-sm"
+              />
+            </div>
           </div>
         </div>
 
@@ -151,3 +199,10 @@ function copyToClipboard(text: string) {
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Ensure CodeMirror takes up the full container height */
+:deep(.cm-editor) {
+  height: 100%;
+}
+</style>
