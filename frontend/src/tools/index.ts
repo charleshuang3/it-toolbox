@@ -11,6 +11,7 @@ import { intBaseConverter } from './int-base-converter/tool';
 import { jsonSchemaValidator } from './json-schema-validator/tool';
 import { formatConverter } from './format-converter/tool';
 import { jsonViewer } from './json-viewer/tool';
+import { worldTime } from './world-time/tool';
 import { Tool } from './tools';
 
 export const allTools: Tool[] = [
@@ -27,6 +28,7 @@ export const allTools: Tool[] = [
   jsonSchemaValidator,
   formatConverter,
   jsonViewer,
+  worldTime,
 ];
 
 const byCategory: Record<string, Tool[]> = {};
