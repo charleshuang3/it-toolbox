@@ -12,6 +12,7 @@ import { jsonSchemaValidator } from './json-schema-validator/tool';
 import { formatConverter } from './format-converter/tool';
 import { jsonViewer } from './json-viewer/tool';
 import { worldTime } from './world-time/tool';
+import { timeConverter } from './time-converter/tool';
 import { Tool } from './tools';
 
 export const allTools: Tool[] = [
@@ -29,6 +30,7 @@ export const allTools: Tool[] = [
   formatConverter,
   jsonViewer,
   worldTime,
+  timeConverter,
 ];
 
 const byCategory: Record<string, Tool[]> = {};
