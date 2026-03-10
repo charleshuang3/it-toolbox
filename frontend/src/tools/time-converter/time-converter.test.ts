@@ -221,7 +221,7 @@ describe('time-converter', () => {
     it('should return a valid IANA timezone', () => {
       const timezone = getLocalTimezone();
       // Should be one of the common timezones or a valid IANA timezone
-      expect(timezone).toMatch(/^[A-Za-z]+\/[A-Za-z_]+/);
+      expect(timezone).toMatch(/^UTC$|^[A-Za-z]+\/[A-Za-z_]+$/);
     });
   });
 
