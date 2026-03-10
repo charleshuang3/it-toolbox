@@ -13,6 +13,7 @@ import { formatConverter } from './format-converter/tool';
 import { jsonViewer } from './json-viewer/tool';
 import { worldTime } from './world-time/tool';
 import { timeConverter } from './time-converter/tool';
+import { tokenCounter } from './token-counter/tool';
 import { Tool } from './tools';
 
 export const allTools: Tool[] = [
@@ -31,6 +32,7 @@ export const allTools: Tool[] = [
   jsonViewer,
   worldTime,
   timeConverter,
+  tokenCounter,
 ];
 
 const byCategory: Record<string, Tool[]> = {};
