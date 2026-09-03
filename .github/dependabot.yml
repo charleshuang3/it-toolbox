@@ -1,11 +1,25 @@
 version: 2
 updates:
   - package-ecosystem: gomod
-    directory: backend/
+    directory: /backend
     schedule:
       interval: weekly
+    groups:
+      go-dependencies:
+        patterns: ["*"]
 
   - package-ecosystem: npm
-    directory: frontend/
+    directory: /frontend
     schedule:
       interval: weekly
+    groups:
+      npm-dependencies:
+        patterns: ["*"]
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: weekly
+    groups:
+      actions-dependencies:
+        patterns: ["*"]

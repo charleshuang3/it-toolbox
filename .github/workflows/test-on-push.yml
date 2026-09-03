@@ -4,36 +4,55 @@ on:
   push:
     branches: [ main ]
 
+env:
+  GO_VERSION: '1.26'
+  NODE_VERSION: '25'
+  PNPM_VERSION: '11.3.0'
+
 jobs:
-  test:
+  backend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.26'
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: backend/go.sum
 
-    - name: Set up pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 11.3.0
+      - name: Run backend tests
+        run: |
+          go test -v ./...
 
-    - name: Set up Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 25
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
 
-    - name: Run backend tests
-      run: |
-        go test -v ./...
-      working-directory: ./backend
+      - name: Set up pnpm
+        uses: pnpm/setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          runtime: node@${{ env.NODE_VERSION }}
 
-    - name: Run frontend formatter check, linter and tests
-      run: |
-        pnpm install --frozen-lockfile
-        pnpm run lint
-        pnpm run fmt:check
-        pnpm run test:run
-      working-directory: ./frontend
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint check
+        run: pnpm run lint
+
+      - name: Format check
+        run: pnpm run fmt:check
+
+      - name: Run tests
+        run: pnpm run test:run
+
+      - name: Build
+        run: pnpm run build
