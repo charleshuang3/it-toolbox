@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Icon } from '@iconify/vue';
-import { ulid, decodeTime } from 'ulid';
+import { ref, watch } from "vue";
+import { Icon } from "@iconify/vue";
+import { ulid, decodeTime } from "ulid";
 
 const count = ref(1);
 const results = ref<string[]>([]);
@@ -31,7 +31,7 @@ function copyToClipboard(text: string) {
 }
 
 function copyAll() {
-  navigator.clipboard.writeText(results.value.join('\n'));
+  navigator.clipboard.writeText(results.value.join("\n"));
 }
 
 function getTimestamp(ulidStr: string): string {
@@ -39,7 +39,7 @@ function getTimestamp(ulidStr: string): string {
     const timestamp = decodeTime(ulidStr);
     return new Date(timestamp).toISOString();
   } catch {
-    return 'Invalid';
+    return "Invalid";
   }
 }
 </script>
@@ -93,7 +93,12 @@ function getTimestamp(ulidStr: string): string {
           </div>
           <div v-for="(ulidStr, index) in results" :key="index" class="flex items-center gap-2">
             <div class="flex-1 flex gap-1">
-              <input type="text" :value="ulidStr" readonly class="input input-bordered font-mono text-sm grow" />
+              <input
+                type="text"
+                :value="ulidStr"
+                readonly
+                class="input input-bordered font-mono text-sm grow"
+              />
               <div v-if="showTimestamp" class="text-xs text-base-content/60">
                 {{ getTimestamp(ulidStr) }}
               </div>
@@ -103,7 +108,9 @@ function getTimestamp(ulidStr: string): string {
             </button>
           </div>
         </div>
-        <div v-else class="text-center text-base-content/50 py-8">Click "Generate" to create ULIDs</div>
+        <div v-else class="text-center text-base-content/50 py-8">
+          Click "Generate" to create ULIDs
+        </div>
       </div>
     </div>
   </div>

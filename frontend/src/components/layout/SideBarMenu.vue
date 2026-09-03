@@ -21,16 +21,16 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
-import { Icon } from '@iconify/vue';
-import type { Tool } from '../../tools/tools';
+import { useRoute } from "vue-router";
+import { Icon } from "@iconify/vue";
+import type { Tool } from "../../tools/tools";
 
 const props = defineProps<{
   toolsByCategory: Record<string, Tool[]>;
 }>();
 
 defineEmits<{
-  'tool-click': [];
+  "tool-click": [];
 }>();
 
 const route = useRoute();

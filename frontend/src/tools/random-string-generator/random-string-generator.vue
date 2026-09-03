@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Icon } from '@iconify/vue';
+import { ref, computed, watch } from "vue";
+import { Icon } from "@iconify/vue";
 
 // Character sets
-const UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const LOWERCASE = 'abcdefghijklmnopqrstuvwxyz';
-const NUMBERS = '0123456789';
-const SYMBOLS = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+const UPPERCASE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
+const NUMBERS = "0123456789";
+const SYMBOLS = "!@#$%^&*()_+-=[]{}|;:,.<>?";
 
 // Settings
 const useUppercase = ref(true);
@@ -26,7 +26,7 @@ const maxCount = 20;
 
 // Computed character set
 const characterSet = computed(() => {
-  let chars = '';
+  let chars = "";
   if (useUppercase.value) chars += UPPERCASE;
   if (useLowercase.value) chars += LOWERCASE;
   if (useNumbers.value) chars += NUMBERS;
@@ -40,13 +40,13 @@ const hasCharacterSet = computed(() => characterSet.value.length > 0);
 // Generate secure random string
 function generateSecureRandomString(length: number): string {
   const chars = characterSet.value;
-  if (chars.length === 0) return '';
+  if (chars.length === 0) return "";
 
-  let result = '';
+  let result = "";
   const randomValues = new Uint32Array(length);
 
   // Use crypto.getRandomValues for secure random generation
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
     crypto.getRandomValues(randomValues);
   } else {
     // Fallback to Math.random (not cryptographically secure)
@@ -94,7 +94,7 @@ function copyToClipboard(text: string) {
 }
 
 function copyAll() {
-  navigator.clipboard.writeText(results.value.join('\n'));
+  navigator.clipboard.writeText(results.value.join("\n"));
 }
 
 // Auto-generate on initial load and when settings change
@@ -118,25 +118,41 @@ watch(
           <div class="flex flex-wrap gap-4">
             <!-- Uppercase -->
             <label class="label cursor-pointer gap-2">
-              <input v-model="useUppercase" type="checkbox" class="checkbox checkbox-sm checkbox-primary" />
+              <input
+                v-model="useUppercase"
+                type="checkbox"
+                class="checkbox checkbox-sm checkbox-primary"
+              />
               <span class="label-text">Uppercase (ABC...)</span>
             </label>
 
             <!-- Lowercase -->
             <label class="label cursor-pointer gap-2">
-              <input v-model="useLowercase" type="checkbox" class="checkbox checkbox-sm checkbox-primary" />
+              <input
+                v-model="useLowercase"
+                type="checkbox"
+                class="checkbox checkbox-sm checkbox-primary"
+              />
               <span class="label-text">Lowercase (abc...)</span>
             </label>
 
             <!-- Numbers -->
             <label class="label cursor-pointer gap-2">
-              <input v-model="useNumbers" type="checkbox" class="checkbox checkbox-sm checkbox-primary" />
+              <input
+                v-model="useNumbers"
+                type="checkbox"
+                class="checkbox checkbox-sm checkbox-primary"
+              />
               <span class="label-text">Numbers (123...)</span>
             </label>
 
             <!-- Symbols -->
             <label class="label cursor-pointer gap-2">
-              <input v-model="useSymbols" type="checkbox" class="checkbox checkbox-sm checkbox-primary" />
+              <input
+                v-model="useSymbols"
+                type="checkbox"
+                class="checkbox checkbox-sm checkbox-primary"
+              />
               <span class="label-text">Symbols (!-;...)</span>
             </label>
           </div>
@@ -167,7 +183,13 @@ watch(
           <label class="label w-30">
             <span class="label-text">Number of Strings</span>
           </label>
-          <input v-model.number="count" type="number" class="input input-bordered grow" :min="1" :max="maxCount" />
+          <input
+            v-model.number="count"
+            type="number"
+            class="input input-bordered grow"
+            :min="1"
+            :max="maxCount"
+          />
         </div>
 
         <!-- Generate button -->
@@ -190,7 +212,12 @@ watch(
             </button>
           </div>
           <div v-for="(str, index) in results" :key="index" class="flex items-center gap-2">
-            <input type="text" :value="str" readonly class="input input-bordered font-mono text-sm grow" />
+            <input
+              type="text"
+              :value="str"
+              readonly
+              class="input input-bordered font-mono text-sm grow"
+            />
             <button class="btn btn-circle btn-sm btn-ghost" @click="copyToClipboard(str)">
               <Icon icon="solar:copy-bold" class="h-4 w-4" />
             </button>

@@ -1,6 +1,10 @@
 <template>
   <Transition appear name="modal">
-    <div v-if="isOpen" class="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4" @click="close">
+    <div
+      v-if="isOpen"
+      class="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4"
+      @click="close"
+    >
       <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" />
       <div
         class="relative w-full max-w-2xl bg-base-100 rounded-lg shadow-2xl border border-base-200 overflow-hidden"
@@ -46,7 +50,10 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <h3 class="font-semibold truncate" v-html="highlightText(tool.name)"></h3>
-                  <p class="text-sm text-base-content/60 line-clamp-2" v-html="highlightText(tool.description)"></p>
+                  <p
+                    class="text-sm text-base-content/60 line-clamp-2"
+                    v-html="highlightText(tool.description)"
+                  ></p>
                 </div>
               </div>
             </div>
@@ -58,11 +65,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue';
-import { useRouter } from 'vue-router';
-import { Icon } from '@iconify/vue';
-import { allTools } from '../tools';
-import type { Tool } from '../tools/tools';
+import { ref, computed, watch, nextTick } from "vue";
+import { useRouter } from "vue-router";
+import { Icon } from "@iconify/vue";
+import { allTools } from "../tools";
+import type { Tool } from "../tools/tools";
 
 interface Props {
   modelValue: boolean;
@@ -73,16 +80,16 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  'update:modelValue': [value: boolean];
+  "update:modelValue": [value: boolean];
 }>();
 
 const router = useRouter();
 const searchInput = ref<HTMLInputElement | null>(null);
-const searchQuery = ref('');
+const searchQuery = ref("");
 
 const isOpen = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value),
+  set: (value) => emit("update:modelValue", value),
 });
 
 const filteredTools = computed(() => {
@@ -114,17 +121,20 @@ const highlightText = (text: string) => {
   }
 
   const query = searchQuery.value.toLowerCase();
-  const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
-  return text.replace(regex, '<mark class="bg-primary text-primary-content px-0.5 rounded">$1</mark>');
+  const regex = new RegExp(`(${escapeRegExp(query)})`, "gi");
+  return text.replace(
+    regex,
+    '<mark class="bg-primary text-primary-content px-0.5 rounded">$1</mark>',
+  );
 };
 
 const escapeRegExp = (str: string) => {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
 const close = () => {
   isOpen.value = false;
-  searchQuery.value = '';
+  searchQuery.value = "";
 };
 
 const selectTool = (tool: Tool) => {
@@ -133,14 +143,14 @@ const selectTool = (tool: Tool) => {
 };
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === 'Escape') {
+  if (event.key === "Escape") {
     close();
   }
 };
 
 watch(isOpen, (newVal) => {
   if (newVal) {
-    searchQuery.value = '';
+    searchQuery.value = "";
     nextTick(() => {
       searchInput.value?.focus();
     });

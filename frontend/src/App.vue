@@ -13,10 +13,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import Navbar from './components/layout/NavBar.vue';
-import Sidebar from './components/layout/SideBar.vue';
-import { useTheme } from './composables/useTheme';
+import { ref, onMounted } from "vue";
+import Navbar from "./components/layout/NavBar.vue";
+import Sidebar from "./components/layout/SideBar.vue";
+import { useTheme } from "./composables/useTheme";
 
 const { initTheme } = useTheme();
 

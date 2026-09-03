@@ -1,8 +1,8 @@
-import Ajv, { ErrorObject, AnySchema } from 'ajv';
-import addFormat from 'ajv-formats';
-import yaml from 'yaml';
-import toml from 'toml';
-import json5 from 'json5';
+import Ajv, { ErrorObject, AnySchema } from "ajv";
+import addFormat from "ajv-formats";
+import yaml from "yaml";
+import toml from "toml";
+import json5 from "json5";
 
 export interface ValidationError {
   message: string;
@@ -63,11 +63,11 @@ email = "john@example.com"`;
  */
 export function getSampleData(format: InputFormat): string {
   switch (format) {
-    case 'json5':
+    case "json5":
       return sampleJson5;
-    case 'yaml':
+    case "yaml":
       return sampleYaml;
-    case 'toml':
+    case "toml":
       return sampleToml;
     default:
       return sampleJson;
@@ -95,7 +95,7 @@ export const sampleSchema = `{
  */
 export function parseJson(input: string): { data: unknown; error: string | null } {
   if (!input.trim()) {
-    return { data: null, error: 'Input is empty' };
+    return { data: null, error: "Input is empty" };
   }
   try {
     const data = JSON.parse(input);
@@ -113,8 +113,8 @@ export function parseJson(input: string): { data: unknown; error: string | null 
  * @returns A formatted string representation of the error
  */
 export function formatError(error: ErrorObject | { message: string }): string {
-  if ('message' in error) {
-    return error.message || '';
+  if ("message" in error) {
+    return error.message || "";
   }
   return JSON.stringify(error);
 }
@@ -160,7 +160,7 @@ export function validateJsonAgainstSchema(
 /**
  * Supported input formats for parsing
  */
-export type InputFormat = 'json' | 'json5' | 'yaml' | 'toml';
+export type InputFormat = "json" | "json5" | "yaml" | "toml";
 
 /**
  * Full validation function that handles parsing both JSON and Schema
@@ -175,7 +175,7 @@ export function validate(
   jsonInput: string,
   schemaInput: string,
   ajvInstance: Ajv = defaultAjv,
-  inputFormat: InputFormat = 'json',
+  inputFormat: InputFormat = "json",
 ): ValidationResult {
   // Parse JSON input based on selected format
   const jsonResult = parseInput(jsonInput, inputFormat);
@@ -206,24 +206,27 @@ export function validate(
  * @param format - The format to parse as
  * @returns An object containing the parsed data or null, and an error message if parsing failed
  */
-export function parseInput(input: string, format: InputFormat): { data: unknown; error: string | null } {
+export function parseInput(
+  input: string,
+  format: InputFormat,
+): { data: unknown; error: string | null } {
   if (!input.trim()) {
-    return { data: null, error: 'Input is empty' };
+    return { data: null, error: "Input is empty" };
   }
 
   try {
     let data: unknown;
     switch (format) {
-      case 'json':
+      case "json":
         data = JSON.parse(input);
         break;
-      case 'json5':
+      case "json5":
         data = json5.parse(input);
         break;
-      case 'yaml':
+      case "yaml":
         data = yaml.parse(input);
         break;
-      case 'toml':
+      case "toml":
         data = toml.parse(input);
         break;
       default:

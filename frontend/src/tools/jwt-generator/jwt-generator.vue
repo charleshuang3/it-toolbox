@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Icon } from '@iconify/vue';
-import JsonEditorVue from 'json-editor-vue';
-import { Mode } from 'vanilla-jsoneditor';
-import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
+import { ref, computed } from "vue";
+import { Icon } from "@iconify/vue";
+import JsonEditorVue from "json-editor-vue";
+import { Mode } from "vanilla-jsoneditor";
+import "vanilla-jsoneditor/themes/jse-theme-dark.css";
 import {
   parseJwt,
   getHeaderFields,
   getPayloadFields,
   type FieldDisplay,
   type ParsedResult,
-} from '../jwt-parser/jwt-utils';
+} from "../jwt-parser/jwt-utils";
 
 interface JwtResponse {
   tokens: Record<string, string>;
@@ -18,35 +18,35 @@ interface JwtResponse {
 
 // Time offset options
 const timeOffsetOptions = [
-  { label: '1 day ago', value: -86400000 },
-  { label: '1 hour ago', value: -3600000 },
-  { label: '10 min ago', value: -600000 },
-  { label: 'now', value: 0 },
-  { label: '10 min after', value: 600000 },
-  { label: '1 hour after', value: 3600000 },
-  { label: '1 day after', value: 86400000 },
+  { label: "1 day ago", value: -86400000 },
+  { label: "1 hour ago", value: -3600000 },
+  { label: "10 min ago", value: -600000 },
+  { label: "now", value: 0 },
+  { label: "10 min after", value: 600000 },
+  { label: "1 hour after", value: 3600000 },
+  { label: "1 day after", value: 86400000 },
 ];
 
 // Input fields
-const issuer = ref('(default)');
+const issuer = ref("(default)");
 const issuedAtOffset = ref(0); // now
 const expirationOffset = ref(600000); // 10 min after
 const notBeforeOffset = ref(0); // now
-const hmacKey = ref('this-is-a-safe-key');
+const hmacKey = ref("this-is-a-safe-key");
 const otherClaims = ref<Record<string, unknown>>({
-  sub: 'sub-123',
-  aur: ['aur-1', 'aur-2'],
+  sub: "sub-123",
+  aur: ["aur-1", "aur-2"],
 });
 
 // Output
 const generatedTokens = ref<Record<string, string>>({});
 const isLoading = ref(false);
-const errorMessage = ref('');
+const errorMessage = ref("");
 
 // Modal state for viewing JWT details
 const showViewModal = ref(false);
-const selectedToken = ref('');
-const selectedAlgorithm = ref('');
+const selectedToken = ref("");
+const selectedAlgorithm = ref("");
 const parsedResult = ref<ParsedResult>({
   header: null,
   payload: null,
@@ -67,13 +67,13 @@ const notBeforeTimestamp = computed(() => Math.floor(notBefore.value.getTime() /
 
 async function generate() {
   isLoading.value = true;
-  errorMessage.value = '';
+  errorMessage.value = "";
 
   try {
-    const response = await fetch('/api/jwt/sign', {
-      method: 'POST',
+    const response = await fetch("/api/jwt/sign", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         hmacKey: hmacKey.value,
@@ -88,13 +88,13 @@ async function generate() {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to generate JWT');
+      throw new Error(error.error || "Failed to generate JWT");
     }
 
     const data: JwtResponse = await response.json();
     generatedTokens.value = data.tokens;
   } catch (err) {
-    errorMessage.value = err instanceof Error ? err.message : 'Failed to generate JWT';
+    errorMessage.value = err instanceof Error ? err.message : "Failed to generate JWT";
     generatedTokens.value = {};
   } finally {
     isLoading.value = false;
@@ -106,7 +106,7 @@ function copyToClipboard(text: string) {
 }
 
 function copyAll() {
-  const tokens = Object.values(generatedTokens.value).join('\n');
+  const tokens = Object.values(generatedTokens.value).join("\n");
   navigator.clipboard.writeText(tokens);
 }
 
@@ -121,8 +121,8 @@ function viewToken(alg: string, token: string) {
 
 function closeViewModal() {
   showViewModal.value = false;
-  selectedToken.value = '';
-  selectedAlgorithm.value = '';
+  selectedToken.value = "";
+  selectedAlgorithm.value = "";
   parsedResult.value = { header: null, payload: null, error: null };
   headerFields.value = [];
   payloadFields.value = [];
@@ -157,7 +157,11 @@ function closeViewModal() {
                 <span class="label-text">Issued At (iat):</span>
               </label>
               <select id="issued-at" v-model="issuedAtOffset" class="select w-full">
-                <option v-for="option in timeOffsetOptions" :key="option.value" :value="option.value">
+                <option
+                  v-for="option in timeOffsetOptions"
+                  :key="option.value"
+                  :value="option.value"
+                >
                   {{ option.label }}
                 </option>
               </select>
@@ -169,7 +173,11 @@ function closeViewModal() {
                 <span class="label-text">Expiration (exp):</span>
               </label>
               <select id="expiration" v-model="expirationOffset" class="select w-full">
-                <option v-for="option in timeOffsetOptions" :key="option.value" :value="option.value">
+                <option
+                  v-for="option in timeOffsetOptions"
+                  :key="option.value"
+                  :value="option.value"
+                >
                   {{ option.label }}
                 </option>
               </select>
@@ -181,7 +189,11 @@ function closeViewModal() {
                 <span class="label-text">Not Before (nbf):</span>
               </label>
               <select id="not-before" v-model="notBeforeOffset" class="select w-full">
-                <option v-for="option in timeOffsetOptions" :key="option.value" :value="option.value">
+                <option
+                  v-for="option in timeOffsetOptions"
+                  :key="option.value"
+                  :value="option.value"
+                >
                   {{ option.label }}
                 </option>
               </select>
@@ -262,14 +274,19 @@ function closeViewModal() {
             </div>
           </div>
         </div>
-        <div v-else class="text-center text-base-content/50 py-8">Click "Generate" to create JWT tokens</div>
+        <div v-else class="text-center text-base-content/50 py-8">
+          Click "Generate" to create JWT tokens
+        </div>
       </div>
     </div>
 
     <!-- View JWT Modal -->
     <dialog :class="{ 'modal modal-open': showViewModal }">
       <div class="modal-box max-w-3xl">
-        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" @click="closeViewModal">
+        <button
+          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          @click="closeViewModal"
+        >
           <Icon icon="solar:close-circle-bold" class="h-5 w-5" />
         </button>
         <h3 class="font-bold text-lg mb-4">JWT Details - {{ selectedAlgorithm }}</h3>
@@ -300,10 +317,12 @@ function closeViewModal() {
                   <td class="font-mono text-sm">
                     <span :class="{ 'text-primary': field.isStandard }">{{ field.field }}</span>
                   </td>
-                  <td class="text-sm text-base-content/70">{{ field.meaning || '-' }}</td>
+                  <td class="text-sm text-base-content/70">{{ field.meaning || "-" }}</td>
                   <td class="font-mono text-sm break-all">{{ field.value }}</td>
                   <td class="text-sm">
-                    <span v-if="field.errorMessage" class="text-error">{{ field.errorMessage }}</span>
+                    <span v-if="field.errorMessage" class="text-error">{{
+                      field.errorMessage
+                    }}</span>
                     <span v-else class="text-base-content/30">-</span>
                   </td>
                 </tr>
@@ -332,10 +351,12 @@ function closeViewModal() {
                   <td class="font-mono text-sm">
                     <span :class="{ 'text-primary': field.isStandard }">{{ field.field }}</span>
                   </td>
-                  <td class="text-sm text-base-content/70">{{ field.meaning || '-' }}</td>
+                  <td class="text-sm text-base-content/70">{{ field.meaning || "-" }}</td>
                   <td class="font-mono text-sm break-all whitespace-pre-wrap">{{ field.value }}</td>
                   <td class="text-sm">
-                    <span v-if="field.errorMessage" class="text-error">{{ field.errorMessage }}</span>
+                    <span v-if="field.errorMessage" class="text-error">{{
+                      field.errorMessage
+                    }}</span>
                     <span v-else class="text-base-content/30">-</span>
                   </td>
                 </tr>

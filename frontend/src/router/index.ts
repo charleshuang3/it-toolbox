@@ -1,19 +1,19 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import type { RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHistory } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
 
 // Route components
-import HomeView from '../views/HomeView.vue';
-import ToolDetailView from '../views/ToolDetailView.vue';
+import HomeView from "../views/HomeView.vue";
+import ToolDetailView from "../views/ToolDetailView.vue";
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/',
-    name: 'home',
+    path: "/",
+    name: "home",
     component: HomeView,
   },
   {
-    path: '/tools/:name',
-    name: 'tool',
+    path: "/tools/:name",
+    name: "tool",
     component: ToolDetailView,
     props: true,
   },

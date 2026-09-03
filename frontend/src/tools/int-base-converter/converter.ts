@@ -9,19 +9,27 @@
  * @returns The converted value as a string
  * @throws Error if the input contains invalid digits for the source base
  */
-export function convertBase({ value, fromBase, toBase }: { value: string; fromBase: number; toBase: number }) {
+export function convertBase({
+  value,
+  fromBase,
+  toBase,
+}: {
+  value: string;
+  fromBase: number;
+  toBase: number;
+}) {
   // Validate base range
   if (fromBase < 2 || fromBase > 64 || toBase < 2 || toBase > 64) {
-    throw new Error('Base must be between 2 and 64');
+    throw new Error("Base must be between 2 and 64");
   }
 
   // Handle empty input
-  if (!value || value.trim() === '') {
-    throw new Error('Input value cannot be empty');
+  if (!value || value.trim() === "") {
+    throw new Error("Input value cannot be empty");
   }
 
   // Character range for bases 2-64: 0-9, a-z, A-Z, +, /
-  const range = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/'.split('');
+  const range = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".split("");
   // Get valid characters for the source and target bases
   const fromRange = range.slice(0, fromBase);
   const toRange = range.slice(0, toBase);
@@ -31,7 +39,7 @@ export function convertBase({ value, fromBase, toBase }: { value: string; fromBa
 
   // Step 1: Convert input from source base to decimal (bigint for large numbers)
   let decValue = value
-    .split('')
+    .split("")
     .reverse()
     .reduce((carry: bigint, digit: string, index: number) => {
       // Validate that each digit is valid for the source base
@@ -44,7 +52,7 @@ export function convertBase({ value, fromBase, toBase }: { value: string; fromBa
     }, 0n);
 
   // Step 2: Convert from decimal to target base
-  let newValue = '';
+  let newValue = "";
   while (decValue > 0) {
     // Get the remainder (least significant digit in new base)
     newValue = toRange[Number(decValue % BigInt(toBase))] + newValue;
@@ -53,7 +61,7 @@ export function convertBase({ value, fromBase, toBase }: { value: string; fromBa
   }
 
   // Return '0' for empty result (handles input of '0')
-  return newValue || '0';
+  return newValue || "0";
 }
 
 /**
@@ -66,16 +74,16 @@ export function convertBase({ value, fromBase, toBase }: { value: string; fromBa
 export function validInt(number: string, base: number): string {
   // Validate base range
   if (base < 2 || base > 64) {
-    return 'Base must be between 2 and 64';
+    return "Base must be between 2 and 64";
   }
 
   // Handle empty input
-  if (!number || number.trim() === '') {
-    return 'Input value cannot be empty';
+  if (!number || number.trim() === "") {
+    return "Input value cannot be empty";
   }
 
   // Character range for bases 2-64: 0-9, a-z, A-Z, +, /
-  const range = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/'.split('');
+  const range = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/".split("");
   const validChars = new Set(range.slice(0, base));
 
   // Check each character
@@ -85,5 +93,5 @@ export function validInt(number: string, base: number): string {
     }
   }
 
-  return '';
+  return "";
 }

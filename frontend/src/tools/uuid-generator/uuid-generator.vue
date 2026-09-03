@@ -1,41 +1,41 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Icon } from '@iconify/vue';
-import { v4, v5, v7 } from 'uuid';
+import { ref, computed, watch } from "vue";
+import { Icon } from "@iconify/vue";
+import { v4, v5, v7 } from "uuid";
 
-type UuidVersion = 'v4' | 'v5' | 'v7';
+type UuidVersion = "v4" | "v5" | "v7";
 
-const version = ref<UuidVersion>('v4');
+const version = ref<UuidVersion>("v4");
 const count = ref(1);
 const namespace = ref(v5.DNS); // DNS namespace by default
-const name = ref('');
+const name = ref("");
 const results = ref<string[]>([]);
 
 const predefinedNamespaces = [
-  { label: 'DNS', value: v5.DNS },
-  { label: 'URL', value: v5.URL },
-  { label: 'OID', value: '6ba7b812-9dad-11d1-80b4-00c04fd430c8' },
-  { label: 'X.500', value: '6ba7b814-9dad-11d1-80b4-00c04fd430c8' },
-  { label: 'Custom', value: '' },
+  { label: "DNS", value: v5.DNS },
+  { label: "URL", value: v5.URL },
+  { label: "OID", value: "6ba7b812-9dad-11d1-80b4-00c04fd430c8" },
+  { label: "X.500", value: "6ba7b814-9dad-11d1-80b4-00c04fd430c8" },
+  { label: "Custom", value: "" },
 ];
 
-const selectedNamespace = ref('DNS');
+const selectedNamespace = ref("DNS");
 
 const versionInfo = computed(() => {
   switch (version.value) {
-    case 'v4':
-      return 'Random UUID. Best for generating unique identifiers without any input data.';
-    case 'v5':
-      return 'Reproducible UUID from namespace + name. Same inputs always produce the same UUID.';
-    case 'v7':
-      return 'Time-ordered UUID. Sortable by generation time, ideal for databases.';
+    case "v4":
+      return "Random UUID. Best for generating unique identifiers without any input data.";
+    case "v5":
+      return "Reproducible UUID from namespace + name. Same inputs always produce the same UUID.";
+    case "v7":
+      return "Time-ordered UUID. Sortable by generation time, ideal for databases.";
     default:
-      return '';
+      return "";
   }
 });
 
 const maxCount = computed(() => {
-  return version.value === 'v5' ? 1 : 20;
+  return version.value === "v5" ? 1 : 20;
 });
 
 watch(selectedNamespace, (val) => {
@@ -46,7 +46,7 @@ watch(selectedNamespace, (val) => {
 });
 
 watch(version, () => {
-  if (version.value === 'v5' && count.value > 1) {
+  if (version.value === "v5" && count.value > 1) {
     count.value = 1;
   }
 });
@@ -63,14 +63,14 @@ watch(count, (val) => {
 function generate() {
   results.value = [];
 
-  if (version.value === 'v5') {
+  if (version.value === "v5") {
     if (!namespace.value || !name.value) return;
     results.value = [v5(name.value, namespace.value)];
-  } else if (version.value === 'v4') {
+  } else if (version.value === "v4") {
     for (let i = 0; i < count.value; i++) {
       results.value.push(v4());
     }
-  } else if (version.value === 'v7') {
+  } else if (version.value === "v7") {
     for (let i = 0; i < count.value; i++) {
       results.value.push(v7());
     }
@@ -82,7 +82,7 @@ function copyToClipboard(text: string) {
 }
 
 function copyAll() {
-  navigator.clipboard.writeText(results.value.join('\n'));
+  navigator.clipboard.writeText(results.value.join("\n"));
 }
 </script>
 
@@ -188,7 +188,11 @@ function copyAll() {
 
         <!-- Generate button -->
         <div class="flex mt-1">
-          <button class="btn btn-primary" :disabled="version === 'v5' && (!namespace || !name)" @click="generate">
+          <button
+            class="btn btn-primary"
+            :disabled="version === 'v5' && (!namespace || !name)"
+            @click="generate"
+          >
             <Icon icon="solar:refresh-bold" class="h-5 w-5" />
             Generate
           </button>
@@ -206,13 +210,20 @@ function copyAll() {
             </button>
           </div>
           <div v-for="(uuid, index) in results" :key="index" class="flex items-center gap-2">
-            <input type="text" :value="uuid" readonly class="input input-bordered flex-1 font-mono text-sm" />
+            <input
+              type="text"
+              :value="uuid"
+              readonly
+              class="input input-bordered flex-1 font-mono text-sm"
+            />
             <button class="btn btn-circle btn-sm" @click="copyToClipboard(uuid)">
               <Icon icon="solar:copy-bold" class="h-4 w-4" />
             </button>
           </div>
         </div>
-        <div v-else class="text-center text-base-content/50 py-8">Click "Generate" to create UUIDs</div>
+        <div v-else class="text-center text-base-content/50 py-8">
+          Click "Generate" to create UUIDs
+        </div>
       </div>
     </div>
   </div>

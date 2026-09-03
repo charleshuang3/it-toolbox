@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Icon } from '@iconify/vue';
-import { DateTime } from 'luxon';
-import { parseTimeInput, commonTimezones, getLocalTimezone } from './time-converter';
+import { ref, computed, watch } from "vue";
+import { Icon } from "@iconify/vue";
+import { DateTime } from "luxon";
+import { parseTimeInput, commonTimezones, getLocalTimezone } from "./time-converter";
 
 // Get local timezone
 const localTimezone = getLocalTimezone();
 
 // Input state
-const inputValue = ref('');
-const inputType = ref<'auto' | 'iso' | 'unix' | 'relative'>('auto');
+const inputValue = ref("");
+const inputType = ref<"auto" | "iso" | "unix" | "relative">("auto");
 const selectedTimezone = ref(localTimezone);
 
 // Parsed result
 const parsedDateTime = ref<DateTime | null>(null);
-const parseError = ref('');
+const parseError = ref("");
 
 // Auto-parse on input change
 watch([inputValue, inputType, selectedTimezone], () => {
@@ -22,7 +22,7 @@ watch([inputValue, inputType, selectedTimezone], () => {
 });
 
 function parseInput() {
-  parseError.value = '';
+  parseError.value = "";
   parsedDateTime.value = null;
 
   if (!inputValue.value.trim()) {
@@ -44,64 +44,64 @@ const conversions = computed(() => {
 
   return [
     {
-      label: 'ISO 8601',
-      value: dt.toISO() || '',
-      icon: 'mdi:code-tags',
+      label: "ISO 8601",
+      value: dt.toISO() || "",
+      icon: "mdi:code-tags",
     },
     {
-      label: 'ISO 8601 (Local)',
-      value: dt.toLocal().toISO() || '',
-      icon: 'mdi:code-tags',
+      label: "ISO 8601 (Local)",
+      value: dt.toLocal().toISO() || "",
+      icon: "mdi:code-tags",
     },
     {
-      label: 'RFC 2822',
+      label: "RFC 2822",
       value: dt.toRFC2822(),
-      icon: 'mdi:email-outline',
+      icon: "mdi:email-outline",
     },
     {
-      label: 'SQL',
+      label: "SQL",
       value: dt.toSQL(),
-      icon: 'mdi:database',
+      icon: "mdi:database",
     },
     {
-      label: 'Unix Timestamp (seconds)',
+      label: "Unix Timestamp (seconds)",
       value: Math.floor(dt.toSeconds()).toString(),
-      icon: 'mdi:numeric',
+      icon: "mdi:numeric",
     },
     {
-      label: 'Unix Timestamp (milliseconds)',
+      label: "Unix Timestamp (milliseconds)",
       value: dt.toMillis().toString(),
-      icon: 'mdi:numeric',
+      icon: "mdi:numeric",
     },
     {
-      label: 'Human Readable',
+      label: "Human Readable",
       value: dt.toLocaleString(DateTime.DATETIME_FULL),
-      icon: 'mdi:format-text',
+      icon: "mdi:format-text",
     },
     {
-      label: 'Date Only',
+      label: "Date Only",
       value: dt.toLocaleString(DateTime.DATE_FULL),
-      icon: 'mdi:calendar',
+      icon: "mdi:calendar",
     },
     {
-      label: 'Time Only',
+      label: "Time Only",
       value: dt.toLocaleString(DateTime.TIME_WITH_SECONDS),
-      icon: 'mdi:clock-outline',
+      icon: "mdi:clock-outline",
     },
     {
-      label: 'Relative',
-      value: dt.toRelative() || '',
-      icon: 'ic:baseline-more-time',
+      label: "Relative",
+      value: dt.toRelative() || "",
+      icon: "ic:baseline-more-time",
     },
     {
-      label: 'UTC Offset',
-      value: dt.toFormat('ZZ'),
-      icon: 'mdi:map-marker-radius',
+      label: "UTC Offset",
+      value: dt.toFormat("ZZ"),
+      icon: "mdi:map-marker-radius",
     },
     {
-      label: 'Day of Week',
-      value: dt.toFormat('cccc'),
-      icon: 'mdi:calendar-week',
+      label: "Day of Week",
+      value: dt.toFormat("cccc"),
+      icon: "mdi:calendar-week",
     },
   ];
 });
@@ -116,15 +116,15 @@ const timezoneConversions = computed(() => {
 
   return commonTimezones.map((tz) => ({
     timezone: tz,
-    display: dt.setZone(tz).toFormat('yyyy-MM-dd HH:mm:ss'),
-    offset: dt.setZone(tz).toFormat('ZZ'),
+    display: dt.setZone(tz).toFormat("yyyy-MM-dd HH:mm:ss"),
+    offset: dt.setZone(tz).toFormat("ZZ"),
     isLocal: tz === localTimezone,
   }));
 });
 
 // Set to current time
 function setNow() {
-  inputValue.value = DateTime.now().toISO() || '';
+  inputValue.value = DateTime.now().toISO() || "";
   parseInput();
 }
 
@@ -136,7 +136,7 @@ function copyToClipboard(text: string) {
 
 // Copy all conversions
 function copyAll() {
-  const text = conversions.value.map((c) => `${c.label}: ${c.value || ''}`).join('\n');
+  const text = conversions.value.map((c) => `${c.label}: ${c.value || ""}`).join("\n");
   navigator.clipboard.writeText(text);
 }
 
@@ -239,7 +239,11 @@ setNow();
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="tz in timezoneConversions" :key="tz.timezone" :class="{ 'bg-primary/10': tz.isLocal }">
+                  <tr
+                    v-for="tz in timezoneConversions"
+                    :key="tz.timezone"
+                    :class="{ 'bg-primary/10': tz.isLocal }"
+                  >
                     <td class="font-mono text-xs">
                       {{ tz.timezone }}
                       <span v-if="tz.isLocal" class="badge badge-primary badge-xs ml-1">Local</span>

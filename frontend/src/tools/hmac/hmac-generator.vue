@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Icon } from '@iconify/vue';
-import { hmacText, type HashType } from '../../utils/hash';
-import { formatBytes, type OutputEncoding } from '../../utils/bytes-formatter';
-import LabelWithActions from '../../components/LabelWithActions.vue';
+import { ref, watch } from "vue";
+import { Icon } from "@iconify/vue";
+import { hmacText, type HashType } from "../../utils/hash";
+import { formatBytes, type OutputEncoding } from "../../utils/bytes-formatter";
+import LabelWithActions from "../../components/LabelWithActions.vue";
 
-const hashFunctionValues: HashType[] = ['md5', 'sha1', 'sha256', 'sha384', 'sha512'];
+const hashFunctionValues: HashType[] = ["md5", "sha1", "sha256", "sha384", "sha512"];
 
 const hashFunctions = hashFunctionValues.map((value) => ({
   label: value.toUpperCase(),
@@ -13,21 +13,21 @@ const hashFunctions = hashFunctionValues.map((value) => ({
 }));
 
 const outputEncodings: { label: string; value: OutputEncoding }[] = [
-  { label: 'Binary (base 2)', value: 'binary' },
-  { label: 'Hexadecimal (base 16)', value: 'hex' },
-  { label: 'Base64 (base 64)', value: 'base64' },
-  { label: 'Base64url (base 64 with url safe chars)', value: 'base64url' },
+  { label: "Binary (base 2)", value: "binary" },
+  { label: "Hexadecimal (base 16)", value: "hex" },
+  { label: "Base64 (base 64)", value: "base64" },
+  { label: "Base64url (base 64 with url safe chars)", value: "base64url" },
 ];
 
-const plainText = ref('');
-const secret = ref('');
-const hashFunction = ref<HashType>('sha256');
-const encoding = ref<OutputEncoding>('hex');
-const hmacResult = ref('');
+const plainText = ref("");
+const secret = ref("");
+const hashFunction = ref<HashType>("sha256");
+const encoding = ref<OutputEncoding>("hex");
+const hmacResult = ref("");
 
 async function computeHmac() {
   if (!plainText.value || !secret.value) {
-    hmacResult.value = '';
+    hmacResult.value = "";
     return;
   }
 
@@ -42,8 +42,8 @@ function copyToClipboard(text: string) {
 }
 
 function clearInputs() {
-  plainText.value = '';
-  secret.value = '';
+  plainText.value = "";
+  secret.value = "";
 }
 </script>
 
@@ -112,7 +112,11 @@ function clearInputs() {
         <!-- Result -->
         <div class="form-control">
           <LabelWithActions label="HMAC result">
-            <button v-if="hmacResult" class="btn btn-ghost btn-sm" @click="copyToClipboard(hmacResult)">
+            <button
+              v-if="hmacResult"
+              class="btn btn-ghost btn-sm"
+              @click="copyToClipboard(hmacResult)"
+            >
               <Icon icon="solar:copy-bold" class="h-4 w-4" />
               Copy
             </button>

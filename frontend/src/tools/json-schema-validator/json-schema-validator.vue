@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, computed, onUnmounted } from 'vue';
-import { Icon } from '@iconify/vue';
+import { ref, watch, computed, onUnmounted } from "vue";
+import { Icon } from "@iconify/vue";
 import {
   sampleSchema,
   validate,
@@ -8,29 +8,29 @@ import {
   getSampleData,
   type ValidationResult,
   type InputFormat,
-} from './json-schema-validator';
-import { useTheme } from '../../composables/useTheme';
-import LabelWithActions from '../../components/LabelWithActions.vue';
+} from "./json-schema-validator";
+import { useTheme } from "../../composables/useTheme";
+import LabelWithActions from "../../components/LabelWithActions.vue";
 
 // CodeMirror imports
-import CodeMirror from 'vue-codemirror6';
-import { json } from '@codemirror/lang-json';
-import { json5 } from 'codemirror-json5';
-import { StreamLanguage } from '@codemirror/language';
-import { toml } from '@codemirror/legacy-modes/mode/toml';
-import { yaml } from '@codemirror/lang-yaml';
+import CodeMirror from "vue-codemirror6";
+import { json } from "@codemirror/lang-json";
+import { json5 } from "codemirror-json5";
+import { StreamLanguage } from "@codemirror/language";
+import { toml } from "@codemirror/legacy-modes/mode/toml";
+import { yaml } from "@codemirror/lang-yaml";
 
 const { codeMirrorTheme } = useTheme();
 
-const jsonInput = ref(getSampleData('json'));
+const jsonInput = ref(getSampleData("json"));
 const schemaInput = ref(sampleSchema);
 const validationResult = ref<ValidationResult | null>(null);
 const isValidating = ref(false);
-const inputFormat = ref<InputFormat>('json');
+const inputFormat = ref<InputFormat>("json");
 
 // Schema input mode: 'custom' or 'from-url'
-const schemaInputMode = ref<'custom' | 'from-url'>('custom');
-const schemaUrl = ref('https://json-schema.org/draft-07/schema');
+const schemaInputMode = ref<"custom" | "from-url">("custom");
+const schemaUrl = ref("https://json-schema.org/draft-07/schema");
 const isFetchingSchema = ref(false);
 const schemaFetchError = ref<string | null>(null);
 const schemaFetchTimer = ref<ReturnType<typeof setTimeout> | null>(null);
@@ -38,23 +38,23 @@ const schemaAbortController = ref<AbortController | null>(null);
 const SCHEMA_FETCH_DELAY = 500; // ms
 
 const inputFormats: { value: InputFormat; label: string }[] = [
-  { value: 'json', label: 'JSON' },
-  { value: 'json5', label: 'JSON5' },
-  { value: 'yaml', label: 'YAML' },
-  { value: 'toml', label: 'TOML' },
+  { value: "json", label: "JSON" },
+  { value: "json5", label: "JSON5" },
+  { value: "yaml", label: "YAML" },
+  { value: "toml", label: "TOML" },
 ];
 
 // Dynamically compute CodeMirror extensions based on the selected input format
 const dataExtensions = computed(() => {
   const theme = codeMirrorTheme();
   switch (inputFormat.value) {
-    case 'yaml':
+    case "yaml":
       return [theme, yaml()];
-    case 'toml':
+    case "toml":
       return [theme, StreamLanguage.define(toml)];
-    case 'json':
+    case "json":
       return [theme, json()];
-    case 'json5':
+    case "json5":
       return [theme, json5()];
   }
   // never reached
@@ -71,7 +71,12 @@ const schemaExtensions = computed(() => {
 function validateJson() {
   isValidating.value = true;
   validationResult.value = null;
-  validationResult.value = validate(jsonInput.value, schemaInput.value, undefined, inputFormat.value);
+  validationResult.value = validate(
+    jsonInput.value,
+    schemaInput.value,
+    undefined,
+    inputFormat.value,
+  );
   isValidating.value = false;
 }
 
@@ -119,7 +124,7 @@ onUnmounted(() => {
 // Fetch schema from URL
 async function fetchSchemaFromUrl() {
   if (!schemaUrl.value) {
-    schemaFetchError.value = 'Please enter a URL';
+    schemaFetchError.value = "Please enter a URL";
     return;
   }
 
@@ -141,11 +146,12 @@ async function fetchSchemaFromUrl() {
     schemaInput.value = JSON.stringify(schemaData, null, 2);
     schemaFetchError.value = null;
   } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
+    if (error instanceof Error && error.name === "AbortError") {
       // Request was cancelled, don't show error
       return;
     }
-    schemaFetchError.value = error instanceof Error ? error.message : 'Failed to fetch schema from URL';
+    schemaFetchError.value =
+      error instanceof Error ? error.message : "Failed to fetch schema from URL";
   } finally {
     isFetchingSchema.value = false;
     schemaAbortController.value = null;
@@ -174,7 +180,7 @@ watch(schemaUrl, () => {
 
 // Fetch when switching to 'from-url' mode
 watch(schemaInputMode, (newMode) => {
-  if (newMode === 'from-url' && schemaUrl.value) {
+  if (newMode === "from-url" && schemaUrl.value) {
     // Clear any pending timer first
     if (schemaFetchTimer.value) {
       clearTimeout(schemaFetchTimer.value);
@@ -341,7 +347,9 @@ watch(schemaInputMode, (newMode) => {
                 <tbody>
                   <tr v-for="(error, index) in validationResult.errors" :key="index">
                     <td>{{ index + 1 }}</td>
-                    <td class="font-mono text-xs">{{ 'instancePath' in error ? error.instancePath || '/' : '/' }}</td>
+                    <td class="font-mono text-xs">
+                      {{ "instancePath" in error ? error.instancePath || "/" : "/" }}
+                    </td>
                     <td class="font-mono text-xs">{{ formatError(error) }}</td>
                   </tr>
                 </tbody>
@@ -350,7 +358,9 @@ watch(schemaInputMode, (newMode) => {
           </div>
         </div>
 
-        <div v-else class="text-center text-base-content/50 py-4">Enter data and schema to validate</div>
+        <div v-else class="text-center text-base-content/50 py-4">
+          Enter data and schema to validate
+        </div>
       </div>
     </div>
   </div>

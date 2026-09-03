@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Icon } from '@iconify/vue';
-import { convertBase, validInt } from './converter';
+import { ref, computed } from "vue";
+import { Icon } from "@iconify/vue";
+import { convertBase, validInt } from "./converter";
 
-const input = ref('42');
+const input = ref("42");
 const inputBase = ref(10);
 const outputBase = ref(42);
 
 function clamp(value: number, min: number, max: number): number {
-  if (typeof value !== 'number' || Number.isNaN(value)) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
     return min;
   }
   return Math.min(Math.max(value, min), max);
@@ -26,7 +26,7 @@ function errorlessConvert(...args: Parameters<typeof convertBase>) {
   try {
     return convertBase(...args);
   } catch {
-    return '';
+    return "";
   }
 }
 
@@ -36,8 +36,8 @@ function copyToClipboard(text: string) {
 
 const error = computed(() => validInt(input.value, inputBase.value));
 
-const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/'
-  .split('')
+const numberTable = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/"
+  .split("")
   .map((char, index) => [char, String(index)] as [string, string]);
 </script>
 
@@ -53,7 +53,11 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
           </summary>
           <div class="collapse-content text-sm">
             <div class="grid grid-cols-8 gap-2 text-center">
-              <div v-for="[char, value] in numberTable" :key="char" class="bg-base-200 p-2 rounded font-mono text-xs">
+              <div
+                v-for="[char, value] in numberTable"
+                :key="char"
+                class="bg-base-200 p-2 rounded font-mono text-xs"
+              >
                 <span class="font-bold">{{ char }}</span>
                 <span class="text-base-content/60">={{ value }}</span>
               </div>
@@ -110,7 +114,9 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
           <button
             class="btn btn-circle btn-sm"
             :disabled="!errorlessConvert({ value: input, fromBase: inputBase, toBase: 2 })"
-            @click="copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 2 }))"
+            @click="
+              copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 2 }))
+            "
           >
             <Icon icon="solar:copy-bold" class="h-4 w-4" />
           </button>
@@ -130,7 +136,9 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
           <button
             class="btn btn-circle btn-sm"
             :disabled="!errorlessConvert({ value: input, fromBase: inputBase, toBase: 8 })"
-            @click="copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 8 }))"
+            @click="
+              copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 8 }))
+            "
           >
             <Icon icon="solar:copy-bold" class="h-4 w-4" />
           </button>
@@ -150,7 +158,9 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
           <button
             class="btn btn-circle btn-sm"
             :disabled="!errorlessConvert({ value: input, fromBase: inputBase, toBase: 10 })"
-            @click="copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 10 }))"
+            @click="
+              copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 10 }))
+            "
           >
             <Icon icon="solar:copy-bold" class="h-4 w-4" />
           </button>
@@ -170,7 +180,9 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
           <button
             class="btn btn-circle btn-sm"
             :disabled="!errorlessConvert({ value: input, fromBase: inputBase, toBase: 16 })"
-            @click="copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 16 }))"
+            @click="
+              copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 16 }))
+            "
           >
             <Icon icon="solar:copy-bold" class="h-4 w-4" />
           </button>
@@ -190,7 +202,9 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
           <button
             class="btn btn-circle btn-sm"
             :disabled="!errorlessConvert({ value: input, fromBase: inputBase, toBase: 64 })"
-            @click="copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 64 }))"
+            @click="
+              copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: 64 }))
+            "
           >
             <Icon icon="solar:copy-bold" class="h-4 w-4" />
           </button>
@@ -220,8 +234,14 @@ const numberTable = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVW
             />
             <button
               class="btn btn-circle btn-sm"
-              :disabled="!errorlessConvert({ value: input, fromBase: inputBase, toBase: outputBase })"
-              @click="copyToClipboard(errorlessConvert({ value: input, fromBase: inputBase, toBase: outputBase }))"
+              :disabled="
+                !errorlessConvert({ value: input, fromBase: inputBase, toBase: outputBase })
+              "
+              @click="
+                copyToClipboard(
+                  errorlessConvert({ value: input, fromBase: inputBase, toBase: outputBase }),
+                )
+              "
             >
               <Icon icon="solar:copy-bold" class="h-4 w-4" />
             </button>

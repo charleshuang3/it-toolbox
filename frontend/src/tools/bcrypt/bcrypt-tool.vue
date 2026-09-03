@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Icon } from '@iconify/vue';
-import { hashSync, compareSync } from 'bcrypt-ts';
-import LabelWithActions from '../../components/LabelWithActions.vue';
+import { ref, computed } from "vue";
+import { Icon } from "@iconify/vue";
+import { hashSync, compareSync } from "bcrypt-ts";
+import LabelWithActions from "../../components/LabelWithActions.vue";
 
-const input = ref('');
+const input = ref("");
 const saltCount = ref(10);
-const hashed = computed(() => (input.value ? hashSync(input.value, saltCount.value) : ''));
+const hashed = computed(() => (input.value ? hashSync(input.value, saltCount.value) : ""));
 
-const compareString = ref('');
-const compareHash = ref('');
+const compareString = ref("");
+const compareHash = ref("");
 const compareMatch = computed(() => {
   if (!compareString.value || !compareHash.value) return false;
   try {
@@ -24,15 +24,15 @@ function copyToClipboard(text: string) {
 }
 
 function clearInput() {
-  input.value = '';
+  input.value = "";
 }
 
 function clearCompareString() {
-  compareString.value = '';
+  compareString.value = "";
 }
 
 function clearCompareHash() {
-  compareHash.value = '';
+  compareHash.value = "";
 }
 
 // Swap hash output to compare hash input
@@ -74,7 +74,13 @@ function swapToVerify() {
           <label class="label">
             <span class="label-text">Salt rounds</span>
           </label>
-          <input v-model.number="saltCount" type="number" class="input input-bordered w-full" min="0" max="20" />
+          <input
+            v-model.number="saltCount"
+            type="number"
+            class="input input-bordered w-full"
+            min="0"
+            max="20"
+          />
         </div>
 
         <!-- Hashed result -->
@@ -83,7 +89,12 @@ function swapToVerify() {
             <span class="label-text">Hashed result</span>
           </label>
           <div class="flex gap-2">
-            <input :value="hashed" type="text" readonly class="input input-bordered font-mono text-sm grow" />
+            <input
+              :value="hashed"
+              type="text"
+              readonly
+              class="input input-bordered font-mono text-sm grow"
+            />
             <button v-if="hashed" class="btn btn-circle" @click="copyToClipboard(hashed)">
               <Icon icon="solar:copy-bold" class="h-5 w-5" />
             </button>
@@ -102,7 +113,11 @@ function swapToVerify() {
         <!-- Compare string -->
         <div class="form-control">
           <LabelWithActions label="Your string">
-            <button class="btn btn-ghost btn-sm" :disabled="!compareString" @click="clearCompareString">
+            <button
+              class="btn btn-ghost btn-sm"
+              :disabled="!compareString"
+              @click="clearCompareString"
+            >
               <Icon icon="solar:trash-bin-trash-bold" class="h-4 w-4" />
             </button>
           </LabelWithActions>
@@ -137,7 +152,11 @@ function swapToVerify() {
           <div
             class="text-lg font-semibold"
             :class="
-              compareMatch ? 'text-success' : compareString && compareHash ? 'text-error' : 'text-base-content/50'
+              compareMatch
+                ? 'text-success'
+                : compareString && compareHash
+                  ? 'text-error'
+                  : 'text-base-content/50'
             "
           >
             <span v-if="compareString && compareHash">
@@ -145,7 +164,7 @@ function swapToVerify() {
                 :icon="compareMatch ? 'solar:check-circle-bold' : 'solar:close-circle-bold'"
                 class="h-6 w-6 inline-block"
               />
-              {{ compareMatch ? 'Yes' : 'No' }}
+              {{ compareMatch ? "Yes" : "No" }}
             </span>
             <span v-else>Enter string and hash to compare</span>
           </div>

@@ -1,20 +1,20 @@
-import { hashText } from './hash-text/tool';
-import { uuidGenerator } from './uuid-generator/tool';
-import { ulidGenerator } from './ulid-generator/tool';
-import { jwtParser } from './jwt-parser/tool';
-import { jwtGenerator } from './jwt-generator/tool';
-import { randomStringGenerator } from './random-string-generator/tool';
-import { encryption } from './encryption/tool';
-import { bcrypt } from './bcrypt/tool';
-import { hmacTool } from './hmac/tool';
-import { intBaseConverter } from './int-base-converter/tool';
-import { jsonSchemaValidator } from './json-schema-validator/tool';
-import { formatConverter } from './format-converter/tool';
-import { jsonViewer } from './json-viewer/tool';
-import { worldTime } from './world-time/tool';
-import { timeConverter } from './time-converter/tool';
-import { tokenCounter } from './token-counter/tool';
-import { Tool } from './tools';
+import { hashText } from "./hash-text/tool";
+import { uuidGenerator } from "./uuid-generator/tool";
+import { ulidGenerator } from "./ulid-generator/tool";
+import { jwtParser } from "./jwt-parser/tool";
+import { jwtGenerator } from "./jwt-generator/tool";
+import { randomStringGenerator } from "./random-string-generator/tool";
+import { encryption } from "./encryption/tool";
+import { bcrypt } from "./bcrypt/tool";
+import { hmacTool } from "./hmac/tool";
+import { intBaseConverter } from "./int-base-converter/tool";
+import { jsonSchemaValidator } from "./json-schema-validator/tool";
+import { formatConverter } from "./format-converter/tool";
+import { jsonViewer } from "./json-viewer/tool";
+import { worldTime } from "./world-time/tool";
+import { timeConverter } from "./time-converter/tool";
+import { tokenCounter } from "./token-counter/tool";
+import { Tool } from "./tools";
 
 export const allTools: Tool[] = [
   hashText,

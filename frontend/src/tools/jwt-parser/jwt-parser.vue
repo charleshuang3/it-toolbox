@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch, computed, onMounted } from 'vue';
-import { Icon } from '@iconify/vue';
+import { ref, watch, computed, onMounted } from "vue";
+import { Icon } from "@iconify/vue";
 import {
   generateToken,
   parseJwt,
@@ -10,11 +10,11 @@ import {
   isHmacAlgorithm,
   type ParsedResult,
   type FieldDisplay,
-} from './jwt-utils';
-import LabelWithActions from '../../components/LabelWithActions.vue';
+} from "./jwt-utils";
+import LabelWithActions from "../../components/LabelWithActions.vue";
 
-const inputToken = ref('');
-const secretKey = ref('this-is-a-safe-key');
+const inputToken = ref("");
+const secretKey = ref("this-is-a-safe-key");
 
 const parsedResult = ref<ParsedResult>({
   header: null,
@@ -27,21 +27,21 @@ const verificationError = ref<string | null>(null);
 
 const headerFields = ref<FieldDisplay[]>([]);
 const payloadFields = ref<FieldDisplay[]>([]);
-const signatureString = ref<string>('');
+const signatureString = ref<string>("");
 
 function updateFields() {
   headerFields.value = getHeaderFields(parsedResult.value.header);
   payloadFields.value = getPayloadFields(parsedResult.value.payload);
   // Extract signature string (third part of JWT)
-  const parts = inputToken.value.trim().split('.');
-  signatureString.value = parts.length === 3 ? parts[2] : '';
+  const parts = inputToken.value.trim().split(".");
+  signatureString.value = parts.length === 3 ? parts[2] : "";
 }
 
 const isHmac = computed(() => isHmacAlgorithm(parsedResult.value.header));
 
 function clearInput() {
-  inputToken.value = '';
-  secretKey.value = '';
+  inputToken.value = "";
+  secretKey.value = "";
   parsedResult.value = {
     header: null,
     payload: null,
@@ -82,8 +82,8 @@ watch([secretKey], () => {
 onMounted(async () => {
   const now = Math.floor(Date.now() / 1000);
   inputToken.value = await generateToken(secretKey.value, {
-    sub: '1234567890',
-    name: 'John Doe',
+    sub: "1234567890",
+    name: "John Doe",
     iat: now,
     exp: now + 600, // 10 minutes
   });
@@ -153,10 +153,12 @@ onMounted(async () => {
                   <td class="font-mono text-sm">
                     <span :class="{ 'text-primary': field.isStandard }">{{ field.field }}</span>
                   </td>
-                  <td class="text-sm text-base-content/70">{{ field.meaning || '-' }}</td>
+                  <td class="text-sm text-base-content/70">{{ field.meaning || "-" }}</td>
                   <td class="font-mono text-sm break-all">{{ field.value }}</td>
                   <td class="text-sm">
-                    <span v-if="field.errorMessage" class="text-error">{{ field.errorMessage }}</span>
+                    <span v-if="field.errorMessage" class="text-error">{{
+                      field.errorMessage
+                    }}</span>
                     <span v-else class="text-base-content/30">-</span>
                   </td>
                 </tr>
@@ -185,10 +187,12 @@ onMounted(async () => {
                   <td class="font-mono text-sm">
                     <span :class="{ 'text-primary': field.isStandard }">{{ field.field }}</span>
                   </td>
-                  <td class="text-sm text-base-content/70">{{ field.meaning || '-' }}</td>
+                  <td class="text-sm text-base-content/70">{{ field.meaning || "-" }}</td>
                   <td class="font-mono text-sm break-all whitespace-pre-wrap">{{ field.value }}</td>
                   <td class="text-sm">
-                    <span v-if="field.errorMessage" class="text-error">{{ field.errorMessage }}</span>
+                    <span v-if="field.errorMessage" class="text-error">{{
+                      field.errorMessage
+                    }}</span>
                     <span v-else class="text-base-content/30">-</span>
                   </td>
                 </tr>
@@ -244,7 +248,7 @@ onMounted(async () => {
                   <td class="text-sm">
                     <span v-if="signatureVerified === true" class="text-success">Valid</span>
                     <span v-else-if="signatureVerified === false" class="text-error">{{
-                      verificationError || 'Invalid'
+                      verificationError || "Invalid"
                     }}</span>
                     <span v-else class="text-base-content/30">-</span>
                   </td>

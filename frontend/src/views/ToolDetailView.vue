@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref, onMounted } from 'vue';
-import { Icon } from '@iconify/vue';
-import { allTools } from '../tools';
+import { computed, defineAsyncComponent, ref, onMounted } from "vue";
+import { Icon } from "@iconify/vue";
+import { allTools } from "../tools";
 
 const props = defineProps<{
   name: string;
@@ -19,7 +19,7 @@ const toolComponent = computed(() => {
 });
 
 // Browser support warning
-const browserWarning = ref('');
+const browserWarning = ref("");
 
 onMounted(() => {
   const t = tool.value;

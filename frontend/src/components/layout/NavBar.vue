@@ -34,10 +34,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
-import { Icon } from '@iconify/vue';
-import SearchModal from '../SearchModal.vue';
-import { useTheme } from '../../composables/useTheme';
+import { ref, onMounted, onUnmounted } from "vue";
+import { Icon } from "@iconify/vue";
+import SearchModal from "../SearchModal.vue";
+import { useTheme } from "../../composables/useTheme";
 
 const { isDark, toggleTheme } = useTheme();
 
@@ -46,7 +46,7 @@ withDefaults(
     title?: string;
   }>(),
   {
-    title: 'Toolbox',
+    title: "Toolbox",
   },
 );
 
@@ -57,21 +57,21 @@ const openSearch = () => {
 };
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+  if ((event.ctrlKey || event.metaKey) && event.key === "k") {
     event.preventDefault();
     isSearchOpen.value = true;
   }
 };
 
 onMounted(() => {
-  document.addEventListener('keydown', handleKeyDown);
+  document.addEventListener("keydown", handleKeyDown);
 });
 
 onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeyDown);
+  document.removeEventListener("keydown", handleKeyDown);
 });
 
 defineEmits<{
-  'toggle-sidebar': [];
+  "toggle-sidebar": [];
 }>();
 </script>

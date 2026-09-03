@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue';
-import { Icon } from '@iconify/vue';
-import { DateTime } from 'luxon';
-import cityTimezones from 'city-timezones';
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
+import { Icon } from "@iconify/vue";
+import { DateTime } from "luxon";
+import cityTimezones from "city-timezones";
 
 // City timezone info interface
 interface CityInfo {
@@ -13,13 +13,13 @@ interface CityInfo {
   province?: string;
 }
 
-const STORAGE_KEY = 'world-time-cities';
-const STORAGE_DATE_FORMAT_KEY = 'world-time-date-format';
-const STORAGE_TIME_FORMAT_KEY = 'world-time-time-format';
+const STORAGE_KEY = "world-time-cities";
+const STORAGE_DATE_FORMAT_KEY = "world-time-date-format";
+const STORAGE_TIME_FORMAT_KEY = "world-time-time-format";
 
 // Default format strings
-const DEFAULT_DATE_FORMAT = 'yyyy-LLL-dd, EEE';
-const DEFAULT_TIME_FORMAT = 'HH:mm:ss';
+const DEFAULT_DATE_FORMAT = "yyyy-LLL-dd, EEE";
+const DEFAULT_TIME_FORMAT = "HH:mm:ss";
 
 // Get local timezone info
 const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -28,7 +28,7 @@ const localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const allCities = cityTimezones.cityMapping
   .filter((city) => city.city && city.timezone)
   .map((city, index) => ({
-    id: `${city.city.replace(/\s+/g, '_').toLowerCase()}_${city.timezone.replace(/[^a-zA-Z0-9]/g, '_')}_${index}`,
+    id: `${city.city.replace(/\s+/g, "_").toLowerCase()}_${city.timezone.replace(/[^a-zA-Z0-9]/g, "_")}_${index}`,
     city: city.city,
     timezone: city.timezone,
     country: city.iso3 || undefined,
@@ -36,7 +36,7 @@ const allCities = cityTimezones.cityMapping
   }));
 
 // Default cities - local and GMT
-const defaultCities: CityInfo[] = [{ id: 'local', city: 'Local', timezone: localTimezone }];
+const defaultCities: CityInfo[] = [{ id: "local", city: "Local", timezone: localTimezone }];
 
 // Helper to load from storage
 function loadFromStorage<T>(key: string, defaultValue: T): T {
@@ -66,7 +66,7 @@ const dateFormat = ref(DEFAULT_DATE_FORMAT);
 const timeFormat = ref(DEFAULT_TIME_FORMAT);
 const currentTime = ref(DateTime.now());
 const showAddModal = ref(false);
-const searchQuery = ref('');
+const searchQuery = ref("");
 const searchInput = ref<HTMLInputElement | null>(null);
 const selectedIndex = ref(0);
 
@@ -147,12 +147,15 @@ const highlightText = (text: string) => {
   }
 
   const query = searchQuery.value.toLowerCase();
-  const regex = new RegExp(`(${escapeRegExp(query)})`, 'gi');
-  return text.replace(regex, '<mark class="bg-primary text-primary-content px-0.5 rounded">$1</mark>');
+  const regex = new RegExp(`(${escapeRegExp(query)})`, "gi");
+  return text.replace(
+    regex,
+    '<mark class="bg-primary text-primary-content px-0.5 rounded">$1</mark>',
+  );
 };
 
 const escapeRegExp = (str: string) => {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
 // Get DateTime in specific timezone
@@ -175,7 +178,7 @@ function formatTime(timezone: string): string {
 // Get timezone name abbreviation
 function getTimezoneAbbr(timezone: string): string {
   const dt = getDateTimeInZone(timezone);
-  return dt.toFormat('ZZZZ');
+  return dt.toFormat("ZZZZ");
 }
 
 // Check if timezone is in daylight saving time using luxon
@@ -187,9 +190,9 @@ function isDaylightSaving(timezone: string): boolean {
 // Get offset from UTC
 function getUtcOffset(timezone: string): string {
   const dt = getDateTimeInZone(timezone);
-  const offset = dt.toFormat('ZZ');
+  const offset = dt.toFormat("ZZ");
 
-  if (offset.endsWith(':00')) {
+  if (offset.endsWith(":00")) {
     return offset.slice(0, -3);
   }
   return offset;
@@ -226,7 +229,7 @@ function moveDown(index: number) {
 
 // Reset to default cities
 function resetToDefault() {
-  cities.value = [{ id: 'local', city: 'Local', timezone: localTimezone }];
+  cities.value = [{ id: "local", city: "Local", timezone: localTimezone }];
 }
 
 // Reset formats to default
@@ -238,7 +241,7 @@ function resetFormats() {
 // Modal handling
 function openModal() {
   showAddModal.value = true;
-  searchQuery.value = '';
+  searchQuery.value = "";
   selectedIndex.value = 0;
   nextTick(() => {
     searchInput.value?.focus();
@@ -247,26 +250,27 @@ function openModal() {
 
 function closeModal() {
   showAddModal.value = false;
-  searchQuery.value = '';
+  searchQuery.value = "";
 }
 
 function handleKeyDown(event: KeyboardEvent) {
-  if (event.key === 'Escape') {
+  if (event.key === "Escape") {
     closeModal();
     return;
   }
 
   if (!filteredCities.value.length) return;
 
-  if (event.key === 'ArrowDown') {
+  if (event.key === "ArrowDown") {
     event.preventDefault();
     selectedIndex.value = (selectedIndex.value + 1) % filteredCities.value.length;
     scrollToSelected();
-  } else if (event.key === 'ArrowUp') {
+  } else if (event.key === "ArrowUp") {
     event.preventDefault();
-    selectedIndex.value = (selectedIndex.value - 1 + filteredCities.value.length) % filteredCities.value.length;
+    selectedIndex.value =
+      (selectedIndex.value - 1 + filteredCities.value.length) % filteredCities.value.length;
     scrollToSelected();
-  } else if (event.key === 'Enter' && filteredCities.value[selectedIndex.value]) {
+  } else if (event.key === "Enter" && filteredCities.value[selectedIndex.value]) {
     event.preventDefault();
     addCity(filteredCities.value[selectedIndex.value]);
   }
@@ -274,8 +278,8 @@ function handleKeyDown(event: KeyboardEvent) {
 
 function scrollToSelected() {
   nextTick(() => {
-    const selectedElement = document.querySelector('.city-result.selected');
-    selectedElement?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const selectedElement = document.querySelector(".city-result.selected");
+    selectedElement?.scrollIntoView({ block: "nearest", behavior: "smooth" });
   });
 }
 </script>
@@ -362,17 +366,25 @@ function scrollToSelected() {
                 </div>
 
                 <!-- Country and province display (if available) -->
-                <div v-if="cityInfo.country || cityInfo.province" class="text-sm text-base-content/50">
+                <div
+                  v-if="cityInfo.country || cityInfo.province"
+                  class="text-sm text-base-content/50"
+                >
                   <span v-if="cityInfo.province">{{ cityInfo.province }}, </span>
                   <span v-if="cityInfo.country">{{ cityInfo.country }}</span>
                 </div>
 
                 <!-- Timezone info -->
                 <div class="flex flex-wrap items-center gap-2 text-xs text-base-content/50">
-                  <span v-if="isDaylightSaving(cityInfo.timezone)" class="badge badge-warning badge-xs">
+                  <span
+                    v-if="isDaylightSaving(cityInfo.timezone)"
+                    class="badge badge-warning badge-xs"
+                  >
                     <Icon icon="mdi:sun-clock" class="h-3 w-3 mr-0.5" />
                   </span>
-                  <span class="font-mono">{{ cityInfo.timezone }} ({{ getTimezoneAbbr(cityInfo.timezone) }})</span>
+                  <span class="font-mono"
+                    >{{ cityInfo.timezone }} ({{ getTimezoneAbbr(cityInfo.timezone) }})</span
+                  >
                 </div>
 
                 <!--action -->
@@ -411,7 +423,10 @@ function scrollToSelected() {
 
         <!-- Empty state -->
         <div v-if="cities.length === 0" class="text-center py-12">
-          <Icon icon="solar:clock-circle-bold" class="h-12 w-12 mx-auto text-base-content/30 mb-4" />
+          <Icon
+            icon="solar:clock-circle-bold"
+            class="h-12 w-12 mx-auto text-base-content/30 mb-4"
+          />
           <p class="text-base-content/50">No cities added. Click "Add City" to get started.</p>
         </div>
       </div>
@@ -452,7 +467,10 @@ function scrollToSelected() {
               <p>Type to search for cities</p>
               <p class="text-sm mt-2">Try searching by city name, country, or timezone</p>
             </div>
-            <div v-else-if="filteredCities.length === 0" class="p-8 text-center text-base-content/60">
+            <div
+              v-else-if="filteredCities.length === 0"
+              class="p-8 text-center text-base-content/60"
+            >
               <Icon icon="material-symbols:search-off" class="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>No cities found for "{{ searchQuery }}"</p>
               <p class="text-sm mt-2">Or all matching cities have already been added</p>
@@ -469,7 +487,9 @@ function scrollToSelected() {
                 ]"
               >
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center shrink-0">
+                  <div
+                    class="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center shrink-0"
+                  >
                     <Icon icon="mdi:city" class="w-6 h-6" />
                   </div>
                   <div class="flex-1 min-w-0">
@@ -487,7 +507,9 @@ function scrollToSelected() {
             </div>
           </div>
 
-          <div class="p-3 border-t border-base-200 bg-base-200/50 text-xs text-base-content/50 flex justify-between">
+          <div
+            class="p-3 border-t border-base-200 bg-base-200/50 text-xs text-base-content/50 flex justify-between"
+          >
             <span v-if="filteredCities.length > 0">{{ filteredCities.length }} results</span>
           </div>
         </div>

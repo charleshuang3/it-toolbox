@@ -1,6 +1,6 @@
-import { ref, watch, computed } from 'vue';
-import { ayuLight } from 'thememirror';
-import { dracula } from 'thememirror';
+import { ref, watch, computed } from "vue";
+import { ayuLight } from "thememirror";
+import { dracula } from "thememirror";
 const THEME_LIGHT = import.meta.env.VITE_THEME_LIGHT;
 const THEME_DARK = import.meta.env.VITE_THEME_DARK;
 
@@ -16,22 +16,22 @@ const isDark = computed(() => theme.value === THEME_DARK);
 export function useTheme() {
   // Apply theme to DOM - DaisyUI compatible
   const applyToDOM = (val: string) => {
-    document.documentElement.setAttribute('data-theme', val);
+    document.documentElement.setAttribute("data-theme", val);
     if (val === THEME_DARK) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
   };
 
   // Initialize theme: saved preference > system preference > default light
   const initTheme = () => {
-    const saved = localStorage.getItem('user-theme');
+    const saved = localStorage.getItem("user-theme");
     if (saved) {
       theme.value = saved;
     } else {
       // Detect system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       theme.value = prefersDark ? THEME_DARK : THEME_LIGHT;
     }
     applyToDOM(theme.value);
@@ -39,7 +39,7 @@ export function useTheme() {
 
   // Watch for changes: persist + apply to DOM
   watch(theme, (newVal) => {
-    localStorage.setItem('user-theme', newVal);
+    localStorage.setItem("user-theme", newVal);
     applyToDOM(newVal);
   });
 

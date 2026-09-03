@@ -33,15 +33,15 @@ Create a `tool.ts` file in your tool directory using the `Tool` interface:
 
 ```typescript
 // src/tools/my-new-tool/tool.ts
-import type { Tool } from '../tools';
+import type { Tool } from "../tools";
 
 export const myNewTool: Tool = {
-  path: 'my-new-tool', // Used in URL for routing
-  name: 'My New Tool', // Display name
-  category: 'Category', // For grouping in sidebar
-  description: 'Description of what the tool does',
-  icon: 'iconify-icon-name', // Icon from Iconify (e.g., 'tabler:tool')
-  component: './my-new-tool.vue', // Relative path to Vue component
+  path: "my-new-tool", // Used in URL for routing
+  name: "My New Tool", // Display name
+  category: "Category", // For grouping in sidebar
+  description: "Description of what the tool does",
+  icon: "iconify-icon-name", // Icon from Iconify (e.g., 'tabler:tool')
+  component: "./my-new-tool.vue", // Relative path to Vue component
 };
 ```
 
@@ -67,8 +67,8 @@ Create a Vue component file (the filename should match what you specified in the
 Open `src/tools/index.ts` and add your tool:
 
 ```typescript
-import { myNewTool } from './my-new-tool/tool';
-import type { Tool } from './tools';
+import { myNewTool } from "./my-new-tool/tool";
+import type { Tool } from "./tools";
 
 export const allTools: Tool[] = [
   hashText,

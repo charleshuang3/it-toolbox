@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { Icon } from '@iconify/vue';
-import { toolsByCategory } from '../tools';
+import { computed } from "vue";
+import { useRouter } from "vue-router";
+import { Icon } from "@iconify/vue";
+import { toolsByCategory } from "../tools";
 
 const router = useRouter();
 
@@ -19,7 +19,9 @@ function navigateToTool(toolPath: string) {
   <div class="space-y-6">
     <div v-for="category in categories" :key="category">
       <h2 class="text-xl font-bold mb-4">{{ category }}</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4"
+      >
         <div
           v-for="tool in toolsByCategory[category]"
           :key="tool.path"

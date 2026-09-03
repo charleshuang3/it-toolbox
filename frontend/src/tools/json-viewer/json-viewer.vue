@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { Icon } from '@iconify/vue';
-import JsonEditorVue from 'json-editor-vue';
-import { Mode } from 'vanilla-jsoneditor';
-import 'vanilla-jsoneditor/themes/jse-theme-dark.css';
-import LabelWithActions from '../../components/LabelWithActions.vue';
+import { ref, computed, watch } from "vue";
+import { Icon } from "@iconify/vue";
+import JsonEditorVue from "json-editor-vue";
+import { Mode } from "vanilla-jsoneditor";
+import "vanilla-jsoneditor/themes/jse-theme-dark.css";
+import LabelWithActions from "../../components/LabelWithActions.vue";
 
 // Sample JSON data
 const sampleJson = JSON.stringify(
   {
-    name: 'John Doe',
+    name: "John Doe",
     age: 30,
-    email: 'john.doe@example.com',
+    email: "john.doe@example.com",
     address: {
-      street: '123 Main St',
-      city: 'New York',
-      country: 'USA',
+      street: "123 Main St",
+      city: "New York",
+      country: "USA",
       coordinates: {
         lat: 40.7128,
         lng: -74.006,
       },
     },
-    hobbies: ['reading', 'gaming', 'hiking'],
+    hobbies: ["reading", "gaming", "hiking"],
     isActive: true,
     balance: 1234.56,
     metadata: {
-      createdAt: '2024-01-15T10:30:00Z',
+      createdAt: "2024-01-15T10:30:00Z",
       updatedAt: null,
-      tags: ['user', 'premium'],
+      tags: ["user", "premium"],
     },
   },
   null,
@@ -60,7 +60,7 @@ watch(jsonInput, (newValue) => {
     JSON.parse(newValue);
     parseError.value = null;
   } catch (e) {
-    parseError.value = e instanceof Error ? e.message : 'Invalid JSON';
+    parseError.value = e instanceof Error ? e.message : "Invalid JSON";
   }
 });
 
@@ -76,7 +76,7 @@ function formatJson() {
     jsonInput.value = JSON.stringify(parsed, null, 2);
     parseError.value = null;
   } catch (e) {
-    parseError.value = e instanceof Error ? e.message : 'Invalid JSON';
+    parseError.value = e instanceof Error ? e.message : "Invalid JSON";
   }
 }
 
@@ -87,13 +87,13 @@ function minifyJson() {
     jsonInput.value = JSON.stringify(parsed);
     parseError.value = null;
   } catch (e) {
-    parseError.value = e instanceof Error ? e.message : 'Invalid JSON';
+    parseError.value = e instanceof Error ? e.message : "Invalid JSON";
   }
 }
 
 // Clear input
 function clearInput() {
-  jsonInput.value = '';
+  jsonInput.value = "";
   parseError.value = null;
 }
 

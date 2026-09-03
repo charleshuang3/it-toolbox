@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue';
-import { Icon } from '@iconify/vue';
-import { convert, getSampleData, formatLabels, type DataFormat } from './format-converter';
-import { useTheme } from '../../composables/useTheme';
-import LabelWithActions from '../../components/LabelWithActions.vue';
+import { ref, watch, computed } from "vue";
+import { Icon } from "@iconify/vue";
+import { convert, getSampleData, formatLabels, type DataFormat } from "./format-converter";
+import { useTheme } from "../../composables/useTheme";
+import LabelWithActions from "../../components/LabelWithActions.vue";
 
 // CodeMirror imports
-import CodeMirror from 'vue-codemirror6';
-import { json } from '@codemirror/lang-json';
-import { json5 } from 'codemirror-json5';
-import { StreamLanguage } from '@codemirror/language';
-import { toml } from '@codemirror/legacy-modes/mode/toml';
-import { yaml } from '@codemirror/lang-yaml';
-import { xml } from '@codemirror/lang-xml';
+import CodeMirror from "vue-codemirror6";
+import { json } from "@codemirror/lang-json";
+import { json5 } from "codemirror-json5";
+import { StreamLanguage } from "@codemirror/language";
+import { toml } from "@codemirror/legacy-modes/mode/toml";
+import { yaml } from "@codemirror/lang-yaml";
+import { xml } from "@codemirror/lang-xml";
 
 const { codeMirrorTheme } = useTheme();
 
-const input = ref('');
-const output = ref('');
-const inputFormat = ref<DataFormat>('json');
-const outputFormat = ref<DataFormat>('yaml');
+const input = ref("");
+const output = ref("");
+const inputFormat = ref<DataFormat>("json");
+const outputFormat = ref<DataFormat>("yaml");
 const error = ref<string | null>(null);
 
-const formats: DataFormat[] = ['json', 'json5', 'xml', 'yaml', 'toml'];
+const formats: DataFormat[] = ["json", "json5", "xml", "yaml", "toml"];
 
 // Get format options for dropdowns
 const formatOptions = computed(() =>
@@ -36,15 +36,15 @@ const formatOptions = computed(() =>
 const inputExtensions = computed(() => {
   const theme = codeMirrorTheme();
   switch (inputFormat.value) {
-    case 'yaml':
+    case "yaml":
       return [theme, yaml()];
-    case 'toml':
+    case "toml":
       return [theme, StreamLanguage.define(toml)];
-    case 'json':
+    case "json":
       return [theme, json()];
-    case 'json5':
+    case "json5":
       return [theme, json5()];
-    case 'xml':
+    case "xml":
       return [theme, xml()];
     default:
       return [theme];
@@ -55,15 +55,15 @@ const inputExtensions = computed(() => {
 const outputExtensions = computed(() => {
   const theme = codeMirrorTheme();
   switch (outputFormat.value) {
-    case 'yaml':
+    case "yaml":
       return [theme, yaml()];
-    case 'toml':
+    case "toml":
       return [theme, StreamLanguage.define(toml)];
-    case 'json':
+    case "json":
       return [theme, json()];
-    case 'json5':
+    case "json5":
       return [theme, json5()];
-    case 'xml':
+    case "xml":
       return [theme, xml()];
     default:
       return [theme];
@@ -73,7 +73,7 @@ const outputExtensions = computed(() => {
 // Perform conversion
 function performConversion() {
   error.value = null;
-  output.value = '';
+  output.value = "";
 
   if (!input.value.trim()) {
     return;
@@ -153,7 +153,11 @@ performConversion();
 
             <!-- Swap Button -->
             <div class="flex items-end">
-              <button class="btn btn-circle btn-sm btn-ghost" @click="swapFormats" title="Swap formats">
+              <button
+                class="btn btn-circle btn-sm btn-ghost"
+                @click="swapFormats"
+                title="Swap formats"
+              >
                 <Icon icon="eva:swap-outline" class="h-5 w-5" />
               </button>
             </div>
@@ -199,7 +203,12 @@ performConversion();
             <div class="form-control">
               <LabelWithActions>
                 <template #label>Output ({{ formatLabels[outputFormat] }})</template>
-                <button class="btn btn-xs btn-ghost" @click="copyToClipboard(output)" title="Copy" :disabled="!output">
+                <button
+                  class="btn btn-xs btn-ghost"
+                  @click="copyToClipboard(output)"
+                  title="Copy"
+                  :disabled="!output"
+                >
                   <Icon icon="solar:copy-bold" class="h-3 w-3" />
                 </button>
               </LabelWithActions>

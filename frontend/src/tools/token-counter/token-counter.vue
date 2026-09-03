@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { Icon } from '@iconify/vue';
-import { estimateTokenCount } from 'tokenx';
-import LabelWithActions from '../../components/LabelWithActions.vue';
+import { ref, computed } from "vue";
+import { Icon } from "@iconify/vue";
+import { estimateTokenCount } from "tokenx";
+import LabelWithActions from "../../components/LabelWithActions.vue";
 
-const inputText = ref('');
+const inputText = ref("");
 const result = computed(() => {
   if (!inputText.value.trim()) {
     return null;
@@ -17,7 +17,7 @@ function formatNumber(num: number): string {
 }
 
 function clearInput() {
-  inputText.value = '';
+  inputText.value = "";
 }
 </script>
 
@@ -49,7 +49,9 @@ function clearInput() {
             {{ formatNumber(result) }}
           </div>
         </div>
-        <div v-else class="text-center text-base-content/50 py-8">Enter text above to estimate token count</div>
+        <div v-else class="text-center text-base-content/50 py-8">
+          Enter text above to estimate token count
+        </div>
       </div>
     </div>
   </div>

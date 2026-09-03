@@ -1,6 +1,6 @@
-import { bytesToHex } from '@noble/ciphers/utils.js';
+import { bytesToHex } from "@noble/ciphers/utils.js";
 
-export type OutputEncoding = 'hex' | 'base64' | 'base64url' | 'binary';
+export type OutputEncoding = "hex" | "base64" | "base64url" | "binary";
 
 /**
  * Converts Uint8Array to Base64 string
@@ -11,7 +11,7 @@ export function bytesToBase64(bytes: Uint8Array): string {
     // @ts-expect-error: toBase64 is supported on browsers.
     return bytes.toBase64();
   }
-  let binary = '';
+  let binary = "";
   for (let i = 0; i < bytes.length; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
@@ -22,7 +22,7 @@ export function bytesToBase64(bytes: Uint8Array): string {
  * Converts Uint8Array to Base64URL string (URL-safe variant)
  */
 export function bytesToBase64url(bytes: Uint8Array): string {
-  return bytesToBase64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  return bytesToBase64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
 /**
@@ -30,8 +30,8 @@ export function bytesToBase64url(bytes: Uint8Array): string {
  */
 export function bytesToBinary(bytes: Uint8Array): string {
   return Array.from(bytes)
-    .map((b) => b.toString(2).padStart(8, '0'))
-    .join('');
+    .map((b) => b.toString(2).padStart(8, "0"))
+    .join("");
 }
 
 /**
@@ -39,13 +39,13 @@ export function bytesToBinary(bytes: Uint8Array): string {
  */
 export function formatBytes(bytes: Uint8Array, encoding: OutputEncoding): string {
   switch (encoding) {
-    case 'hex':
+    case "hex":
       return bytesToHex(bytes);
-    case 'binary':
+    case "binary":
       return bytesToBinary(bytes);
-    case 'base64url':
+    case "base64url":
       return bytesToBase64url(bytes);
-    case 'base64':
+    case "base64":
     default:
       return bytesToBase64(bytes);
   }

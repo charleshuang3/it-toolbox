@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { Icon } from '@iconify/vue';
-import { hashText, type HashType } from '../../utils/hash';
-import { formatBytes, OutputEncoding } from '../../utils/bytes-formatter';
-import LabelWithActions from '../../components/LabelWithActions.vue';
+import { ref, watch } from "vue";
+import { Icon } from "@iconify/vue";
+import { hashText, type HashType } from "../../utils/hash";
+import { formatBytes, OutputEncoding } from "../../utils/bytes-formatter";
+import LabelWithActions from "../../components/LabelWithActions.vue";
 
-const inputText = ref('');
-const encoding = ref('hex');
+const inputText = ref("");
+const encoding = ref("hex");
 
 const encodings = [
-  { label: 'Binary (base 2)', value: 'binary' },
-  { label: 'Hexadecimal (base 16)', value: 'hex' },
-  { label: 'Base64 (base 64)', value: 'base64' },
-  { label: 'Base64url (base 64 with url safe chars)', value: 'base64url' },
+  { label: "Binary (base 2)", value: "binary" },
+  { label: "Hexadecimal (base 16)", value: "hex" },
+  { label: "Base64 (base 64)", value: "base64" },
+  { label: "Base64url (base 64 with url safe chars)", value: "base64url" },
 ];
 
 const hashTypesValues: HashType[] = [
-  'md5',
-  'sha1',
-  'ripemd160',
-  'sha224',
-  'sha256',
-  'sha384',
-  'sha512',
-  'sha3_224',
-  'sha3_256',
-  'sha3_384',
-  'sha3_512',
-  'keccak_256',
+  "md5",
+  "sha1",
+  "ripemd160",
+  "sha224",
+  "sha256",
+  "sha384",
+  "sha512",
+  "sha3_224",
+  "sha3_256",
+  "sha3_384",
+  "sha3_512",
+  "keccak_256",
 ];
 
 const hashTypes = hashTypesValues.map((value) => ({
@@ -35,12 +35,14 @@ const hashTypes = hashTypesValues.map((value) => ({
   value,
 }));
 
-const hashResults = ref<Record<string, string>>(Object.fromEntries(hashTypesValues.map((v) => [v.toUpperCase(), ''])));
+const hashResults = ref<Record<string, string>>(
+  Object.fromEntries(hashTypesValues.map((v) => [v.toUpperCase(), ""])),
+);
 
 async function computeHashes() {
   if (!inputText.value) {
     Object.keys(hashResults.value).forEach((key) => {
-      hashResults.value[key] = '';
+      hashResults.value[key] = "";
     });
     return;
   }
@@ -61,7 +63,7 @@ async function computeHashes() {
 }
 
 function clearInput() {
-  inputText.value = '';
+  inputText.value = "";
 }
 
 function copyToClipboard(text: string) {
@@ -112,8 +114,18 @@ watch([inputText, encoding], computeHashes);
         <div class="space-y-2">
           <div v-for="(value, algo) in hashResults" :key="algo" class="flex items-center gap-2">
             <div class="w-25 text-sm font-medium">{{ algo }}</div>
-            <input type="text" :value="value" readonly class="input input-bordered flex-1" placeholder="Hash result" />
-            <button class="btn btn-circle btn-sm" :disabled="!value" @click="copyToClipboard(value)">
+            <input
+              type="text"
+              :value="value"
+              readonly
+              class="input input-bordered flex-1"
+              placeholder="Hash result"
+            />
+            <button
+              class="btn btn-circle btn-sm"
+              :disabled="!value"
+              @click="copyToClipboard(value)"
+            >
               <Icon icon="solar:copy-bold" class="h-4 w-4" />
             </button>
           </div>
