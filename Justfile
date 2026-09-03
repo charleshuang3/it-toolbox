@@ -24,6 +24,22 @@ lint-backend:
 lint-frontend:
     cd frontend && pnpm run lint
 
+# Run go mod tidy on backend
+tidy:
+    cd backend && go mod tidy
+
+# Update go mod dependencies
+update-go-deps:
+    cd backend && go get -u -t ./...
+    @just tidy
+
+# Update pnpm dependencies in frontend
+update-pnpm-deps:
+    cd frontend && pnpm update
+
+# Update both Go and pnpm dependencies
+update-deps: update-go-deps update-pnpm-deps
+
 # Run backend and frontend tests
 test: test-backend test-frontend
 
