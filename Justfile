@@ -20,7 +20,7 @@ lint: lint-backend lint-frontend
 lint-backend:
     cd backend && go vet ./...
 
-# Lint frontend code using eslint
+# Lint frontend code using oxlint
 lint-frontend:
     cd frontend && npm run lint
 
@@ -42,9 +42,9 @@ fmt: fmt-backend fmt-frontend
 fmt-backend:
     cd backend && go fmt ./...
 
-# Format frontend code using prettier
+# Format frontend code using oxfmt
 fmt-frontend:
-    cd frontend && npm run format
+    cd frontend && npm run fmt
 
 # Check formatting without modifying files
 fmt-check: fmt-check-backend fmt-check-frontend
@@ -55,7 +55,7 @@ fmt-check-backend:
 
 # Check frontend code formatting
 fmt-check-frontend:
-    cd frontend && npm run format:check
+    cd frontend && npm run fmt:check
 
 # Run frontend TypeScript type checking
 typecheck:

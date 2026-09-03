@@ -35,8 +35,8 @@ COPY frontend/vite.config.ts ./
 COPY frontend/tsconfig.json ./
 COPY frontend/tsconfig.app.json ./
 COPY frontend/tsconfig.node.json ./
-COPY frontend/eslint.config.ts ./
-COPY frontend/.prettierrc ./
+COPY frontend/.oxlintrc.json ./
+COPY frontend/.oxfmtrc.json ./
 COPY frontend/.env ./
 
 # Build the frontend
