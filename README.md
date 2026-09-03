@@ -15,6 +15,7 @@ A modern web application providing a collection of useful developer tools in a s
 - Go 1.26+
 - Node.js 25+
 - Docker (for building the container)
+- [just](https://github.com/casey/just) (optional command runner)
 
 ### Local Development
 
@@ -57,6 +58,19 @@ go test ./...
 # Frontend tests
 cd frontend
 npm test
+```
+
+### Common Commands (using `just`)
+
+If you have [`just`](https://github.com/casey/just) installed:
+
+```bash
+just build        # Build both backend and frontend
+just lint         # Run backend (go vet) and frontend (eslint) linters
+just test         # Run backend and frontend tests
+just fmt          # Format backend (go fmt) and frontend (prettier) code
+just fmt-check    # Check code formatting without making changes
+just clean        # Clean build artifacts
 ```
 
 ## Deployment
