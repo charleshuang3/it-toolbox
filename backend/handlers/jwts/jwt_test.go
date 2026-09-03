@@ -9,13 +9,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/charleshuang3/it-toolbox/backend/config"
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/jwx/v3/jwa"
 	"github.com/lestrrat-go/jwx/v3/jwk"
 	"github.com/lestrrat-go/jwx/v3/jwt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/charleshuang3/it-toolbox/backend/config"
 )
 
 func init() {

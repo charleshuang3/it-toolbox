@@ -11,9 +11,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-gonic/gin"
+
 	"github.com/charleshuang3/it-toolbox/backend/config"
 	"github.com/charleshuang3/it-toolbox/backend/handlers"
-	"github.com/gin-gonic/gin"
 )
 
 func main() {

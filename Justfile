@@ -16,9 +16,9 @@ build-frontend:
 # Run linters for backend and frontend
 lint: lint-backend lint-frontend
 
-# Lint backend code using go vet
+# Lint backend code using golangci-lint
 lint-backend:
-    cd backend && go vet ./...
+    cd backend && golangci-lint run ./...
 
 # Lint frontend code using oxlint
 lint-frontend:
@@ -54,9 +54,9 @@ test-frontend:
 # Format backend and frontend code
 fmt: fmt-backend fmt-frontend
 
-# Format backend Go code
+# Format backend Go code using goimports
 fmt-backend:
-    cd backend && go fmt ./...
+    goimports -w -local "github.com/charleshuang3/it-toolbox" backend
 
 # Format frontend code using oxfmt
 fmt-frontend:
@@ -65,9 +65,9 @@ fmt-frontend:
 # Check formatting without modifying files
 fmt-check: fmt-check-backend fmt-check-frontend
 
-# Check backend Go code formatting
+# Check backend Go code formatting using goimports
 fmt-check-backend:
-    @test -z "$(gofmt -l backend)" || (echo "Unformatted Go files found:" && gofmt -l backend && exit 1)
+    @test -z "$($(go env GOPATH)/bin/goimports -local github.com/charleshuang3/it-toolbox -l backend 2>/dev/null || goimports -local github.com/charleshuang3/it-toolbox -l backend)" || (echo "Unformatted Go files found:" && goimports -local github.com/charleshuang3/it-toolbox -l backend && exit 1)
 
 # Check frontend code formatting
 fmt-check-frontend:

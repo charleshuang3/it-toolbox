@@ -4,8 +4,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/charleshuang3/it-toolbox/backend/config"
 	"github.com/gin-gonic/gin"
+
+	"github.com/charleshuang3/it-toolbox/backend/config"
 )
 
 func SetupHandlers(r *gin.Engine, config *config.Config) error {

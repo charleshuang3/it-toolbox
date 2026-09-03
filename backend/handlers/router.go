@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"github.com/gin-gonic/gin"
+
 	"github.com/charleshuang3/it-toolbox/backend/config"
 	"github.com/charleshuang3/it-toolbox/backend/handlers/frontend"
 	"github.com/charleshuang3/it-toolbox/backend/handlers/jwts"
-	"github.com/gin-gonic/gin"
 )
 
 func SetupHandlers(r *gin.Engine, conf *config.Config) error {

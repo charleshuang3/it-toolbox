@@ -11,11 +11,12 @@ import (
 	"sort"
 	"time"
 
-	"github.com/charleshuang3/it-toolbox/backend/config"
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/jwx/v3/jwa"
 	"github.com/lestrrat-go/jwx/v3/jwk"
 	"github.com/lestrrat-go/jwx/v3/jwt"
+
+	"github.com/charleshuang3/it-toolbox/backend/config"
 )
 
 var supportedAlgortihms = []string{
@@ -167,7 +168,9 @@ func newJWKSHandler(config config.JWKSConfig) (*jwksHandler, error) {
 	}
 	sort.Strings(kids)
 	for _, kid := range kids {
-		publicKeySet.AddKey(keys[kid].publicKey)
+		if err := publicKeySet.AddKey(keys[kid].publicKey); err != nil {
+			return nil, err
+		}
 	}
 
 	h := &jwksHandler{
