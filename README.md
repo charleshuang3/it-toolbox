@@ -32,8 +32,8 @@ A modern web application providing a collection of useful developer tools in a s
 
    ```bash
    cd frontend
-   npm install
-   npm run dev
+   pnpm install
+   pnpm run dev
    ```
 
    The frontend development server runs on port 5173 by default.
@@ -57,7 +57,7 @@ go test ./...
 
 # Frontend tests
 cd frontend
-npm test
+pnpm test
 ```
 
 ### Common Commands (using `just`)

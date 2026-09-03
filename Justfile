@@ -11,7 +11,7 @@ build-backend:
 
 # Build frontend production bundle
 build-frontend:
-    cd frontend && npm run build
+    cd frontend && pnpm run build
 
 # Run linters for backend and frontend
 lint: lint-backend lint-frontend
@@ -22,7 +22,7 @@ lint-backend:
 
 # Lint frontend code using oxlint
 lint-frontend:
-    cd frontend && npm run lint
+    cd frontend && pnpm run lint
 
 # Run backend and frontend tests
 test: test-backend test-frontend
@@ -33,7 +33,7 @@ test-backend:
 
 # Run frontend tests
 test-frontend:
-    cd frontend && npm run test:run
+    cd frontend && pnpm run test:run
 
 # Format backend and frontend code
 fmt: fmt-backend fmt-frontend
@@ -44,7 +44,7 @@ fmt-backend:
 
 # Format frontend code using oxfmt
 fmt-frontend:
-    cd frontend && npm run fmt
+    cd frontend && pnpm run fmt
 
 # Check formatting without modifying files
 fmt-check: fmt-check-backend fmt-check-frontend
@@ -55,11 +55,11 @@ fmt-check-backend:
 
 # Check frontend code formatting
 fmt-check-frontend:
-    cd frontend && npm run fmt:check
+    cd frontend && pnpm run fmt:check
 
 # Run frontend TypeScript type checking
 typecheck:
-    cd frontend && npm run typecheck
+    cd frontend && pnpm run typecheck
 
 # Clean build artifacts
 clean:

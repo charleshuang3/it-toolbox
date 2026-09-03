@@ -16,8 +16,10 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.2",
     "@codemirror/lang-xml": "^6.1.0",
     "@codemirror/lang-yaml": "^6.1.2",
+    "@codemirror/language": "^6.12.4",
     "@codemirror/legacy-modes": "^6.5.2",
     "@noble/ciphers": "^2.1.1",
     "@noble/hashes": "^2.0.1",
@@ -39,6 +41,7 @@
     "toml": "^3.0.0",
     "ulid": "^3.0.2",
     "uuid": "^13.0.0",
+    "vanilla-jsoneditor": "^3.13.0",
     "vue": "^3.5.29",
     "vue-codemirror6": "^1.4.2",
     "vue-router": "^5.0.3",
@@ -56,9 +59,11 @@
     "daisyui": "^5.5.19",
     "oxfmt": "^0.64.0",
     "oxlint": "^1.81.0",
+    "tailwindcss": "^4.3.3",
     "typescript": "~5.6.2",
     "vite": "^7.3.1",
     "vitest": "^4.0.18",
     "vue-tsc": "^2.1.10"
-  }
+  },
+  "packageManager": "pnpm@11.3.0"
 }

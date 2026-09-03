@@ -20,13 +20,15 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o it-toolbox ./cmd/main.go
 # Stage 2: Build frontend
 FROM node:25-alpine AS builder-frontend
 
+RUN npm install -g pnpm@11.3.0
+
 WORKDIR /build/frontend
 
 # Copy package files
-COPY frontend/package.json frontend/package-lock.json ./
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./
 
 # Install dependencies
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 # Copy source code
 COPY frontend/src ./src
@@ -40,7 +42,7 @@ COPY frontend/.oxfmtrc.json ./
 COPY frontend/.env ./
 
 # Build the frontend
-RUN npm run build
+RUN pnpm run build
 
 # Stage 3: Deploy
 FROM alpine:latest AS deploy
