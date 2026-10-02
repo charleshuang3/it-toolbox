@@ -341,15 +341,14 @@ describe("format-converter", () => {
     it("should handle all format conversions", () => {
       const formats: DataFormat[] = ["json", "json5", "yaml", "toml", "xml"];
 
-      for (const from of formats) {
-        for (const to of formats) {
-          if (from !== to) {
-            const sample = sampleData[from];
-            const result = convert(sample, from, to);
-            expect(result.error).toBeNull();
-            expect(result.result).toBeTruthy();
-          }
-        }
+      const pairs = formats.flatMap((from) =>
+        formats.filter((to) => to !== from).map((to) => ({ from, to })),
+      );
+
+      for (const { from, to } of pairs) {
+        const result = convert(sampleData[from], from, to);
+        expect.soft(result.error).toBeNull();
+        expect.soft(result.result).toBeTruthy();
       }
     });
   });
