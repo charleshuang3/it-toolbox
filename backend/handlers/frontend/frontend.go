@@ -21,6 +21,9 @@ func SetupHandlers(r *gin.Engine, config *config.Config) error {
 	// Serve static assets from /assets prefix
 	r.Static("/assets", config.FrontendFilePath+"/assets")
 
+	// Serve favicon
+	r.StaticFile("/icon.svg", config.FrontendFilePath+"/icon.svg")
+
 	// Serve index.html for all other non-API routes (SPA fallback)
 	r.NoRoute(func(c *gin.Context) {
 		if !strings.HasPrefix(c.Request.URL.Path, "/api") {
