@@ -1,6 +1,32 @@
-<svg width="800px" height="800px" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="0" y="0" width="17" height="17" rx="2" fill="#9ca3af"/>
-<g transform="translate(1 1)">
-<path d="M3.5 4.5L6.5 7.5L3.5 10.5M8 10.5H12M1.5 1.5H13.5C14.0523 1.5 14.5 1.94772 14.5 2.5V12.5C14.5 13.0523 14.0523 13.5 13.5 13.5H1.5C0.947716 13.5 0.5 13.0523 0.5 12.5V2.5C0.5 1.94772 0.947715 1.5 1.5 1.5Z" stroke="#ffffff"/>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="100%" height="100%">
+  <defs>
+    <!-- Background subtle gradient for depth -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <!-- Code prompt gradient -->
+    <linearGradient id="promptGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+
+    <!-- Drop shadow for inner elements -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="0.6" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Outer Squircle with subtle border outline -->
+  <rect x="1" y="1" width="30" height="30" rx="7" fill="url(#bgGrad)" stroke="#334155" stroke-width="1" />
+
+  <!-- Terminal Content Group with subtle drop shadow -->
+  <g filter="url(#shadow)">
+    <!-- Terminal Prompt: > -->
+    <path d="M7.5 10L13.5 16L7.5 22" fill="none" stroke="url(#promptGrad)" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round" />
+    
+    <!-- Cursor: _ -->
+    <path d="M16 22H24.5" fill="none" stroke="#f1f5f9" stroke-width="2.75" stroke-linecap="round" />
+  </g>
 </svg>
