@@ -13,14 +13,6 @@
       <router-link to="/">{{ title }}</router-link>
     </div>
 
-    <div class="flex-none hidden md:block">
-      <button @click="openSearch" class="btn btn-ghost">
-        <Icon icon="material-symbols:search" class="w-6 h-6" />
-        Search
-        <span class="text-xs text-base-content/50">(Ctrl+K)</span>
-      </button>
-    </div>
-
     <div class="flex-none gap-2">
       <label class="swap swap-rotate btn btn-ghost btn-circle">
         <input type="checkbox" class="theme-controller" :checked="isDark" @change="toggleTheme" />
@@ -29,14 +21,10 @@
       </label>
     </div>
   </div>
-
-  <SearchModal v-model="isSearchOpen" />
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
 import { Icon } from "@iconify/vue";
-import SearchModal from "../SearchModal.vue";
 import { useTheme } from "../../composables/useTheme";
 
 const { isDark, toggleTheme } = useTheme();
@@ -49,27 +37,6 @@ withDefaults(
     title: "Toolbox",
   },
 );
-
-const isSearchOpen = ref(false);
-
-const openSearch = () => {
-  isSearchOpen.value = true;
-};
-
-const handleKeyDown = (event: KeyboardEvent) => {
-  if ((event.ctrlKey || event.metaKey) && event.key === "k") {
-    event.preventDefault();
-    isSearchOpen.value = true;
-  }
-};
-
-onMounted(() => {
-  document.addEventListener("keydown", handleKeyDown);
-});
-
-onUnmounted(() => {
-  document.removeEventListener("keydown", handleKeyDown);
-});
 
 defineEmits<{
   "toggle-sidebar": [];

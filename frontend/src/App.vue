@@ -9,13 +9,16 @@
         <router-view />
       </main>
     </div>
+
+    <SearchModal v-model="isSearchOpen" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import Navbar from "./components/layout/NavBar.vue";
 import Sidebar from "./components/layout/SideBar.vue";
+import SearchModal from "./components/SearchModal.vue";
 import { useTheme } from "./composables/useTheme";
 
 const { initTheme } = useTheme();
@@ -30,4 +33,20 @@ defineProps<{
 
 const isSidebarOpen = ref(false);
 const isSidebarCollapsed = ref(false);
+const isSearchOpen = ref(false);
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if ((event.ctrlKey || event.metaKey) && event.key === "k") {
+    event.preventDefault();
+    isSearchOpen.value = true;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener("keydown", handleKeyDown);
+});
+
+onUnmounted(() => {
+  document.removeEventListener("keydown", handleKeyDown);
+});
 </script>

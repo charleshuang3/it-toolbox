@@ -39,10 +39,12 @@
 
           <div v-else class="divide-y divide-base-200">
             <div
-              v-for="tool in filteredTools"
+              v-for="(tool, index) in filteredTools"
               :key="tool.path"
               @click="selectTool(tool)"
-              class="p-4 hover:bg-base-200 cursor-pointer transition-colors"
+              @mousemove="selectedIndex = index"
+              class="p-4 cursor-pointer transition-colors"
+              :class="selectedIndex === index ? 'bg-base-200' : 'hover:bg-base-200'"
             >
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-base-200 flex items-center justify-center">
@@ -86,6 +88,7 @@ const emit = defineEmits<{
 const router = useRouter();
 const searchInput = ref<HTMLInputElement | null>(null);
 const searchQuery = ref("");
+const selectedIndex = ref(0);
 
 const isOpen = computed({
   get: () => props.modelValue,
@@ -145,12 +148,34 @@ const selectTool = (tool: Tool) => {
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key === "Escape") {
     close();
+  } else if (event.key === "ArrowDown") {
+    event.preventDefault();
+    if (filteredTools.value.length > 0) {
+      selectedIndex.value = (selectedIndex.value + 1) % filteredTools.value.length;
+    }
+  } else if (event.key === "ArrowUp") {
+    event.preventDefault();
+    if (filteredTools.value.length > 0) {
+      selectedIndex.value =
+        (selectedIndex.value - 1 + filteredTools.value.length) % filteredTools.value.length;
+    }
+  } else if (event.key === "Enter") {
+    event.preventDefault();
+    const tool = filteredTools.value[selectedIndex.value];
+    if (tool) {
+      selectTool(tool);
+    }
   }
 };
+
+watch(searchQuery, () => {
+  selectedIndex.value = 0;
+});
 
 watch(isOpen, (newVal) => {
   if (newVal) {
     searchQuery.value = "";
+    selectedIndex.value = 0;
     nextTick(() => {
       searchInput.value?.focus();
     });
