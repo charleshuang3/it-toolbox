@@ -9,7 +9,7 @@ env:
   GOIMPORTS_VERSION: latest
   GOLANGCI_LINT_VERSION: latest
   NODE_VERSION: '25'
-  PNPM_VERSION: '11.3.0'
+  PNPM_VERSION: '12.19.0'
 
 jobs:
   backend:

@@ -20,7 +20,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o it-toolbox ./cmd/main.go
 # Stage 2: Build frontend
 FROM node:25-alpine AS builder-frontend
 
-RUN npm install -g pnpm@11.3.0
+RUN npm install -g pnpm@12.19.0
 
 WORKDIR /build/frontend
 

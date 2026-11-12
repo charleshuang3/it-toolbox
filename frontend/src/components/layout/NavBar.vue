@@ -13,6 +13,14 @@
       <router-link to="/">{{ title }}</router-link>
     </div>
 
+    <div class="flex-none hidden md:block">
+      <button @click="$emit('open-search')" class="btn btn-ghost">
+        <Icon icon="material-symbols:search" class="w-6 h-6" />
+        Search
+        <span class="text-xs text-base-content/50">(Ctrl+K)</span>
+      </button>
+    </div>
+
     <div class="flex-none gap-2">
       <label class="swap swap-rotate btn btn-ghost btn-circle">
         <input type="checkbox" class="theme-controller" :checked="isDark" @change="toggleTheme" />
@@ -40,5 +48,6 @@ withDefaults(
 
 defineEmits<{
   "toggle-sidebar": [];
+  "open-search": [];
 }>();
 </script>

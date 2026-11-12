@@ -1,6 +1,10 @@
 <template>
   <div class="h-screen bg-base-200 flex flex-col overflow-hidden">
-    <Navbar :title="title" @toggle-sidebar="isSidebarCollapsed = !isSidebarCollapsed" />
+    <Navbar
+      :title="title"
+      @toggle-sidebar="isSidebarCollapsed = !isSidebarCollapsed"
+      @open-search="isSearchOpen = true"
+    />
 
     <div class="flex flex-1 overflow-hidden">
       <input id="main-drawer" type="checkbox" class="drawer-toggle" v-model="isSidebarOpen" />
