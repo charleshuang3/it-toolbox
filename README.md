@@ -13,7 +13,7 @@ A modern web application providing a collection of useful developer tools in a s
 ### Prerequisites
 
 - Go 1.27+
-- Node.js 25+
+- Node.js 26+
 - Docker (for building the container)
 - [just](https://github.com/casey/just) (optional command runner)
 

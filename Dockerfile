@@ -1,5 +1,5 @@
 # Stage 1: Build Go backend
-FROM golang:1.27.1-alpine AS builder-backend
+FROM golang:1.27.4-alpine AS builder-backend
 
 WORKDIR /build/backend
 
@@ -18,9 +18,9 @@ COPY backend/handlers ./handlers
 RUN CGO_ENABLED=0 GOOS=linux go build -o it-toolbox ./cmd/main.go
 
 # Stage 2: Build frontend
-FROM node:25-alpine AS builder-frontend
+FROM node:26-alpine AS builder-frontend
 
-RUN npm install -g pnpm@12.19.0
+RUN npm install -g pnpm@12.21.0
 
 WORKDIR /build/frontend
 
