@@ -1,39 +1,13 @@
-import { hashText } from "./hash-text/tool";
-import { uuidGenerator } from "./uuid-generator/tool";
-import { ulidGenerator } from "./ulid-generator/tool";
-import { jwtParser } from "./jwt-parser/tool";
-import { jwtGenerator } from "./jwt-generator/tool";
-import { randomStringGenerator } from "./random-string-generator/tool";
-import { encryption } from "./encryption/tool";
-import { bcrypt } from "./bcrypt/tool";
-import { hmacTool } from "./hmac/tool";
-import { intBaseConverter } from "./int-base-converter/tool";
-import { jsonSchemaValidator } from "./json-schema-validator/tool";
-import { formatConverter } from "./format-converter/tool";
-import { jsonViewer } from "./json-viewer/tool";
-import { worldTime } from "./world-time/tool";
-import { timeConverter } from "./time-converter/tool";
-import { tokenCounter } from "./token-counter/tool";
-import { Tool } from "./tools";
+import type { Tool } from "./tools";
 
-export const allTools: Tool[] = [
-  hashText,
-  uuidGenerator,
-  ulidGenerator,
-  jwtParser,
-  jwtGenerator,
-  randomStringGenerator,
-  encryption,
-  bcrypt,
-  hmacTool,
-  intBaseConverter,
-  jsonSchemaValidator,
-  formatConverter,
-  jsonViewer,
-  worldTime,
-  timeConverter,
-  tokenCounter,
-];
+// Every tool lives in ./<name>/tool.ts and exports a Tool; they are discovered automatically.
+const modules = import.meta.glob<Record<string, unknown>>("./*/tool.ts", { eager: true });
+
+export const allTools: Tool[] = Object.values(modules).flatMap((mod) =>
+  Object.values(mod).filter(
+    (v): v is Tool => typeof v === "object" && v !== null && "path" in v && "component" in v,
+  ),
+);
 
 const byCategory: Record<string, Tool[]> = {};
 allTools.forEach((tool) => {
