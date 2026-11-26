@@ -95,18 +95,18 @@ func TestDialerRefusesHostnameResolvingPrivate(t *testing.T) {
 func TestDialerAllowPrivate(t *testing.T) {
 	ln, err := net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(t, err)
-	defer ln.Close()
+	defer func() { _ = ln.Close() }()
 	go func() {
 		c, err := ln.Accept()
 		if err == nil {
-			c.Close()
+			_ = c.Close()
 		}
 	}()
 
 	g := &Guard{AllowPrivate: true}
 	c, err := g.DialContext(context.Background(), "tcp", ln.Addr().String())
 	require.NoError(t, err)
-	c.Close()
+	_ = c.Close()
 
 	// and with the policy on, the real socket path refuses loopback
 	g = &Guard{}
@@ -128,13 +128,13 @@ func TestDialerResolvesOnceAndDialsCheckedIP(t *testing.T) {
 		dial: func(_ context.Context, _, addr string) (net.Conn, error) {
 			dialed = append(dialed, addr)
 			c, s := net.Pipe()
-			s.Close()
+			_ = s.Close()
 			return c, nil
 		},
 	}
 	c, err := g.DialContext(context.Background(), "tcp", "rebind.example:8080")
 	require.NoError(t, err)
-	c.Close()
+	_ = c.Close()
 	assert.EqualValues(t, 1, calls.Load(), "hostname must be resolved exactly once")
 	assert.Equal(t, []string{"93.184.216.34:8080"}, dialed, "must connect to the checked IP literal, not the name")
 }
@@ -148,13 +148,13 @@ func TestDialerFamilyAndNetwork(t *testing.T) {
 		dial: func(_ context.Context, _, addr string) (net.Conn, error) {
 			dialed = append(dialed, addr)
 			c, s := net.Pipe()
-			s.Close()
+			_ = s.Close()
 			return c, nil
 		},
 	}
 	c, err := g.DialContext(context.Background(), "tcp4", "dual.example:443")
 	require.NoError(t, err)
-	c.Close()
+	_ = c.Close()
 	assert.Equal(t, []string{"1.1.1.1:443"}, dialed)
 
 	_, err = g.DialContext(context.Background(), "unix", "/tmp/sock")
@@ -181,7 +181,7 @@ func TestHTTPClientFetchesPublicHost(t *testing.T) {
 
 	resp, err := e.g.HTTPClient(5*time.Second, 3).Get("http://ok.example/")
 	require.NoError(t, err)
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	assert.Equal(t, 200, resp.StatusCode)
 	assert.Equal(t, []string{"8.8.8.8:80"}, e.dialedAddrs())
 }
@@ -233,7 +233,7 @@ func TestRedirectToPrivateBlocked(t *testing.T) {
 			before := len(e.dialedAddrs())
 			resp, err := c.Get("http://good.example/start")
 			if resp != nil {
-				resp.Body.Close()
+				_ = resp.Body.Close()
 			}
 			require.Error(t, err)
 			assert.Contains(t, err.Error(), tt.wantErr)
@@ -249,7 +249,7 @@ func TestRedirectToPrivateBlocked(t *testing.T) {
 		target.Store("http://also.example/final")
 		resp, err := c.Get("http://good.example/start")
 		require.NoError(t, err)
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 		assert.Equal(t, "http://also.example/final", resp.Request.URL.String())
 	})
 }
@@ -313,7 +313,7 @@ func TestDialTLS(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "example.com", conn.ConnectionState().ServerName)
 	require.NotEmpty(t, conn.ConnectionState().PeerCertificates)
-	conn.Close()
+	_ = conn.Close()
 	assert.Equal(t, []string{"8.8.8.8:443"}, e.dialedAddrs())
 
 	_, err = e.g.DialTLS(context.Background(), "tcp", "internal.example:443", &tls.Config{RootCAs: pool, MinVersion: tls.VersionTLS12})
