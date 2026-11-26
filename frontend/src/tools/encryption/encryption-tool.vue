@@ -1,158 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { Icon } from "@iconify/vue";
-import {
-  bytesToHex,
-  hexToBytes,
-  bytesToUtf8,
-  utf8ToBytes,
-  randomBytes,
-} from "@noble/ciphers/utils.js";
-import type { Cipher, AsyncCipher } from "@noble/ciphers/utils.js";
-import { hashText } from "../../utils/hash";
+import { bytesToHex, randomBytes } from "@noble/ciphers/utils.js";
+import { algoConfig, encrypt, decrypt, PBKDF2_ITERATIONS } from "./crypto";
+import type { AlgoType } from "./crypto";
 import LabelWithActions from "../../components/LabelWithActions.vue";
-
-type AlgoType = "AES-GCM" | "AES-CBC" | "AES-CTR" | "ChaCha20-Poly1305";
-
-// Algorithm configuration
-const algoConfig: Record<AlgoType, { nonceSize: number; keySize: number }> = {
-  "AES-GCM": { nonceSize: 12, keySize: 32 }, // key size 32 bytes means 256 bits
-  "AES-CBC": { nonceSize: 16, keySize: 32 },
-  "AES-CTR": { nonceSize: 12, keySize: 32 },
-  "ChaCha20-Poly1305": { nonceSize: 12, keySize: 32 },
-};
-
-// Dynamic import for AES-GCM cipher
-async function getGcm(key: Uint8Array, nonce: Uint8Array): Promise<Cipher | AsyncCipher> {
-  if (crypto.subtle) {
-    const { gcm } = await import("@noble/ciphers/webcrypto.js");
-    return gcm(key, nonce);
-  }
-  const { gcm } = await import("@noble/ciphers/aes.js");
-  return gcm(key, nonce);
-}
-
-// Dynamic import for AES-CBC cipher
-async function getCbc(key: Uint8Array, nonce: Uint8Array): Promise<Cipher | AsyncCipher> {
-  if (crypto.subtle) {
-    const { cbc } = await import("@noble/ciphers/webcrypto.js");
-    return cbc(key, nonce);
-  }
-  const { cbc } = await import("@noble/ciphers/aes.js");
-  return cbc(key, nonce);
-}
-
-// Dynamic import for AES-CTR cipher
-async function getCtr(key: Uint8Array, nonce: Uint8Array): Promise<Cipher | AsyncCipher> {
-  if (crypto.subtle) {
-    const { ctr } = await import("@noble/ciphers/webcrypto.js");
-    return ctr(key, nonce);
-  }
-  const { ctr } = await import("@noble/ciphers/aes.js");
-  return ctr(key, nonce);
-}
-
-// Dynamic import for ChaCha20-Poly1305 (no webcrypto version, always use pure JS)
-async function getChacha20poly1305(key: Uint8Array, nonce: Uint8Array): Promise<Cipher> {
-  const { chacha20poly1305 } = await import("@noble/ciphers/chacha.js");
-  return chacha20poly1305(key, nonce);
-}
-
-// Derive a key from the secret using SHA-256 hash
-async function deriveKey(secret: string, keySize: number): Promise<Uint8Array> {
-  const hashArray = await hashText("sha256", secret);
-  return hashArray.slice(0, keySize);
-}
-
-// Generate a random nonce using dynamic import
-async function generateNonce(size: number): Promise<Uint8Array> {
-  return randomBytes(size);
-}
-
-// Generate a zero-filled nonce
-function zeroNonce(size: number): Uint8Array {
-  return new Uint8Array(size);
-}
-
-// Encrypt function
-async function encrypt(
-  plaintext: string,
-  secret: string,
-  algorithm: AlgoType,
-  nonceHex?: string,
-): Promise<string> {
-  const config = algoConfig[algorithm];
-  const key = await deriveKey(secret, config.keySize);
-  const nonce = nonceHex ? hexToBytes(nonceHex) : zeroNonce(config.nonceSize);
-
-  const plaintextBytes = utf8ToBytes(plaintext);
-  let ciphertext: Uint8Array;
-
-  switch (algorithm) {
-    case "AES-GCM": {
-      const cipher = await getGcm(key, nonce);
-      ciphertext = await cipher.encrypt(plaintextBytes);
-      break;
-    }
-    case "AES-CBC": {
-      const cipher = await getCbc(key, nonce);
-      ciphertext = await cipher.encrypt(plaintextBytes);
-      break;
-    }
-    case "AES-CTR": {
-      const cipher = await getCtr(key, nonce);
-      ciphertext = await cipher.encrypt(plaintextBytes);
-      break;
-    }
-    case "ChaCha20-Poly1305": {
-      const cipher = await getChacha20poly1305(key, nonce);
-      ciphertext = cipher.encrypt(plaintextBytes);
-      break;
-    }
-  }
-
-  return bytesToHex(ciphertext);
-}
-
-// Decrypt function
-async function decrypt(
-  ciphertextHex: string,
-  secret: string,
-  algorithm: AlgoType,
-  nonceHex: string,
-): Promise<string> {
-  const config = algoConfig[algorithm];
-  const key = await deriveKey(secret, config.keySize);
-  const nonce = hexToBytes(nonceHex);
-  const ciphertext = hexToBytes(ciphertextHex);
-
-  let plaintext: Uint8Array;
-
-  switch (algorithm) {
-    case "AES-GCM": {
-      const cipher = await getGcm(key, nonce);
-      plaintext = await cipher.decrypt(ciphertext);
-      break;
-    }
-    case "AES-CBC": {
-      const cipher = await getCbc(key, nonce);
-      plaintext = await cipher.decrypt(ciphertext);
-      break;
-    }
-    case "AES-CTR": {
-      const cipher = await getCtr(key, nonce);
-      plaintext = await cipher.decrypt(ciphertext);
-      break;
-    }
-    case "ChaCha20-Poly1305": {
-      const cipher = await getChacha20poly1305(key, nonce);
-      plaintext = cipher.decrypt(ciphertext);
-      break;
-    }
-  }
-
-  return bytesToUtf8(plaintext);
-}
 
 // Encrypt section
 const encryptInput = ref("Lorem ipsum dolor sit amet");
@@ -160,24 +12,32 @@ const encryptAlgo = ref<AlgoType>("AES-GCM");
 const encryptSecret = ref("my secret key");
 const encryptNonce = ref("");
 const encryptOutput = ref("");
+const encryptUsedNonce = ref("");
+const encryptError = ref("");
 const encryptLoading = ref(false);
 
 async function doEncrypt() {
   if (!encryptInput.value || !encryptSecret.value) {
     encryptOutput.value = "";
+    encryptUsedNonce.value = "";
+    encryptError.value = "";
     return;
   }
   encryptLoading.value = true;
   try {
-    encryptOutput.value = await encrypt(
+    const result = await encrypt(
       encryptInput.value,
       encryptSecret.value,
       encryptAlgo.value,
       encryptNonce.value || undefined,
     );
+    encryptOutput.value = result.ciphertext;
+    encryptUsedNonce.value = result.nonce;
+    encryptError.value = "";
   } catch (e) {
     encryptOutput.value = "";
-    console.error(e);
+    encryptUsedNonce.value = "";
+    encryptError.value = e instanceof Error ? e.message : String(e);
   } finally {
     encryptLoading.value = false;
   }
@@ -222,9 +82,11 @@ async function doDecrypt() {
       decryptError.value = "";
       decryptOutput.value = result;
     }
-  } catch {
+  } catch (e) {
     decryptError.value =
-      "Unable to decrypt your text. Check your secret key, nonce, and algorithm.";
+      e instanceof Error && e.message.startsWith("Nonce")
+        ? e.message
+        : "Unable to decrypt your text. Check your secret key, nonce, and algorithm.";
     decryptOutput.value = "";
   } finally {
     decryptLoading.value = false;
@@ -246,15 +108,14 @@ function swapToDecrypt() {
     decryptInput.value = encryptOutput.value;
     decryptAlgo.value = encryptAlgo.value;
     decryptSecret.value = encryptSecret.value;
-    decryptNonce.value =
-      encryptNonce.value || bytesToHex(zeroNonce(algoConfig[encryptAlgo.value].nonceSize));
+    decryptNonce.value = encryptUsedNonce.value;
   }
 }
 
 // Generate random nonce for encryption
 async function generateEncryptNonce() {
   const config = algoConfig[encryptAlgo.value];
-  encryptNonce.value = bytesToHex(await generateNonce(config.nonceSize));
+  encryptNonce.value = bytesToHex(randomBytes(config.nonceSize));
 }
 
 // Clear nonce field
@@ -310,6 +171,10 @@ const algoOptions = Object.keys(algoConfig) as AlgoType[];
               class="input input-bordered w-full"
               placeholder="Enter secret key"
             />
+            <p class="text-xs text-base-content/60 mt-1">
+              The key is derived with PBKDF2-SHA256 ({{ PBKDF2_ITERATIONS.toLocaleString() }}
+              iterations) and a fixed public salt. Use a long, random secret.
+            </p>
           </div>
 
           <!-- Nonce (optional) -->
@@ -341,8 +206,34 @@ const algoOptions = Object.keys(algoConfig) as AlgoType[];
               v-model="encryptNonce"
               type="text"
               class="input input-bordered w-full font-mono text-sm"
-              :placeholder="`Leave empty to use 0 (${algoConfig[encryptAlgo].nonceSize} bytes)`"
+              :placeholder="`Leave empty to generate a random nonce (${algoConfig[encryptAlgo].nonceSize} bytes)`"
             />
+          </div>
+
+          <!-- Nonce used -->
+          <div v-if="encryptUsedNonce" class="form-control">
+            <LabelWithActions label="Nonce used (hex, needed for decryption)">
+              <button
+                class="btn btn-xs btn-ghost"
+                @click="copyToClipboard(encryptUsedNonce)"
+                title="Copy nonce"
+              >
+                <Icon icon="solar:copy-bold" class="h-3 w-3" />
+                Copy
+              </button>
+            </LabelWithActions>
+            <input
+              :value="encryptUsedNonce"
+              type="text"
+              readonly
+              class="input input-bordered w-full font-mono text-sm"
+            />
+          </div>
+
+          <!-- Error message -->
+          <div v-if="encryptError" class="alert alert-error text-sm">
+            <Icon icon="solar:danger-circle-bold" class="h-5 w-5" />
+            <span>{{ encryptError }}</span>
           </div>
 
           <!-- Output -->
