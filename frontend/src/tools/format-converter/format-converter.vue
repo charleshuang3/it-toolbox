@@ -2,7 +2,7 @@
 import { ref, watch, computed } from "vue";
 import { Icon } from "@iconify/vue";
 import { convert, getSampleData, formatLabels, type DataFormat } from "./format-converter";
-import { useTheme } from "../../composables/useTheme";
+import { useEditorTheme } from "../../composables/useEditorTheme";
 import LabelWithActions from "../../components/LabelWithActions.vue";
 
 // CodeMirror imports
@@ -14,7 +14,7 @@ import { toml } from "@codemirror/legacy-modes/mode/toml";
 import { yaml } from "@codemirror/lang-yaml";
 import { xml } from "@codemirror/lang-xml";
 
-const { codeMirrorTheme } = useTheme();
+const { codeMirrorTheme } = useEditorTheme();
 
 const input = ref("");
 const output = ref("");

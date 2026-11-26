@@ -1,6 +1,4 @@
 import { ref, watch, computed } from "vue";
-import { ayuLight } from "thememirror";
-import { dracula } from "thememirror";
 const THEME_LIGHT = import.meta.env.VITE_THEME_LIGHT;
 const THEME_DARK = import.meta.env.VITE_THEME_DARK;
 
@@ -13,6 +11,14 @@ const theme = ref<string>(THEME_LIGHT);
 // Computed property for checking if current theme is dark
 const isDark = computed(() => theme.value === THEME_DARK);
 
+const readSaved = (): string | null => {
+  try {
+    return localStorage.getItem("user-theme");
+  } catch {
+    return null;
+  }
+};
+
 export function useTheme() {
   // Apply theme to DOM - DaisyUI compatible
   const applyToDOM = (val: string) => {
@@ -24,33 +30,38 @@ export function useTheme() {
     }
   };
 
-  // Initialize theme: saved preference > system preference > default light
+  // Initialize theme: saved explicit preference > system preference > default light
   const initTheme = () => {
-    const saved = localStorage.getItem("user-theme");
+    const saved = readSaved();
     if (saved) {
       theme.value = saved;
     } else {
-      // Detect system preference
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      theme.value = prefersDark ? THEME_DARK : THEME_LIGHT;
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      theme.value = mq.matches ? THEME_DARK : THEME_LIGHT;
+      // Follow system changes while the user has not chosen explicitly
+      mq.addEventListener("change", (e) => {
+        if (!readSaved()) {
+          theme.value = e.matches ? THEME_DARK : THEME_LIGHT;
+        }
+      });
     }
     applyToDOM(theme.value);
   };
 
-  // Watch for changes: persist + apply to DOM
+  // Apply to DOM on change. Persist only on explicit user toggle, so the
+  // system preference is not permanently overridden by merely visiting.
   watch(theme, (newVal) => {
-    localStorage.setItem("user-theme", newVal);
     applyToDOM(newVal);
   });
 
-  // Toggle between light and dark themes
+  // Toggle between light and dark themes (explicit choice, persisted)
   const toggleTheme = () => {
     theme.value = theme.value === THEME_LIGHT ? THEME_DARK : THEME_LIGHT;
-  };
-
-  // Get the CodeMirror theme based on current dark mode
-  const codeMirrorTheme = () => {
-    return isDark.value ? dracula : ayuLight;
+    try {
+      localStorage.setItem("user-theme", theme.value);
+    } catch {
+      // storage unavailable; ignore
+    }
   };
 
   return {
@@ -60,6 +71,5 @@ export function useTheme() {
     initTheme,
     THEME_LIGHT,
     THEME_DARK,
-    codeMirrorTheme,
   };
 }

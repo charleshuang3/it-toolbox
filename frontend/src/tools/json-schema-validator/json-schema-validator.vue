@@ -9,7 +9,7 @@ import {
   type ValidationResult,
   type InputFormat,
 } from "./json-schema-validator";
-import { useTheme } from "../../composables/useTheme";
+import { useEditorTheme } from "../../composables/useEditorTheme";
 import LabelWithActions from "../../components/LabelWithActions.vue";
 
 // CodeMirror imports
@@ -20,7 +20,7 @@ import { StreamLanguage } from "@codemirror/language";
 import { toml } from "@codemirror/legacy-modes/mode/toml";
 import { yaml } from "@codemirror/lang-yaml";
 
-const { codeMirrorTheme } = useTheme();
+const { codeMirrorTheme } = useEditorTheme();
 
 const jsonInput = ref(getSampleData("json"));
 const schemaInput = ref(sampleSchema);
