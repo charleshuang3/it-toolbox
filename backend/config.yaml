@@ -3,3 +3,24 @@ debug: true
 frontend_file_path: ../frontend/dist
 jwks:
   issuer: http://localhost:8881/api/jwt
+
+# Outbound network diagnostic tools (DNS lookup, TLS check, HTTP inspector).
+network_tools:
+  # false (default): refuse loopback, private, link-local (cloud metadata),
+  # CGNAT, multicast and other non-public targets. Set true only for
+  # self-hosted intranet use where users are trusted.
+  allow_private: false
+  # Timeout for a whole outbound request (Go duration, e.g. 10s).
+  request_timeout: 10s
+  # Max network tool requests in flight at once (0 = unlimited).
+  max_concurrent: 20
+  # Sustained requests per minute per client IP (0 = unlimited).
+  rate_limit_per_minute: 30
+  # Burst size per client IP (0 = same as rate_limit_per_minute).
+  rate_limit_burst: 0
+  # Only set when running behind a reverse proxy that sets X-Forwarded-For;
+  # otherwise the header is ignored (it is trivially spoofable).
+  behind_proxy: false
+  # Optional IPs/CIDRs of proxies allowed to supply X-Forwarded-For.
+  # Empty with behind_proxy: true trusts the direct peer.
+  trusted_proxies: []
