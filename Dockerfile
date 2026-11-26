@@ -13,6 +13,7 @@ RUN go mod download
 COPY backend/cmd ./cmd
 COPY backend/config ./config
 COPY backend/handlers ./handlers
+COPY backend/netguard ./netguard
 
 # Build the Go application
 RUN CGO_ENABLED=0 GOOS=linux go build -o it-toolbox ./cmd/main.go
