@@ -30,6 +30,7 @@
     "codemirror": "^6.0.2",
     "codemirror-json5": "^1.0.3",
     "culori": "^4.0.2",
+    "diff": "^9.0.0",
     "fast-xml-parser": "^5.12.1",
     "he": "^2.0.0",
     "jose": "^6.2.17",

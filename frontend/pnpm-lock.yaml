@@ -217,6 +217,9 @@ importers:
       culori:
         specifier: ^4.0.2
         version: 4.0.2
+      diff:
+        specifier: ^9.0.0
+        version: 9.0.0
       fast-xml-parser:
         specifier: ^5.12.1
         version: 5.12.1
@@ -1229,6 +1232,10 @@ packages:
   diff-sequences@29.6.3:
     resolution: {integrity: sha512-EjePK1srD3P08o2j4f0ExnylqRs5B9tJjcp9t1krH2qRi8CCdsYfwe9JgSLurFBWwq4uOlipzfk5fHNvwFKr8Q==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+
+  diff@9.0.0:
+    resolution: {integrity: sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==}
+    engines: {node: '>=0.3.1'}
 
   dijkstrajs@1.0.3:
     resolution: {integrity: sha512-qiSlmBq9+BCdCA/L46dw8Uy93mloxsPSbwnm5yrKn2vMPiy8KyAskTF6zuV/j5BMsmOGZDPs7KjU+mjb670kfA==}
@@ -2735,6 +2742,8 @@ snapshots:
   devalue@5.9.4: {}
 
   diff-sequences@29.6.3: {}
+
+  diff@9.0.0: {}
 
   dijkstrajs@1.0.3: {}
 
