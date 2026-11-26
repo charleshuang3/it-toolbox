@@ -31,7 +31,7 @@ func LoadConfig(path string) (*Config, error) {
 
 func Simple() *Config {
 	return &Config{
-		Port:             80,
+		Port:             8080,
 		Debug:            false,
 		FrontendFilePath: "/app/frontend",
 		JWKS: JWKSConfig{
