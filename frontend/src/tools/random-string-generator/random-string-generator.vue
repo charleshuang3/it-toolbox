@@ -42,21 +42,13 @@ function generateSecureRandomString(length: number): string {
   const chars = characterSet.value;
   if (chars.length === 0) return "";
 
+  // Rejection sampling avoids modulo bias
+  const limit = 0x100000000 - (0x100000000 % chars.length);
+  const buf = new Uint32Array(1);
   let result = "";
-  const randomValues = new Uint32Array(length);
-
-  // Use crypto.getRandomValues for secure random generation
-  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-    crypto.getRandomValues(randomValues);
-  } else {
-    // Fallback to Math.random (not cryptographically secure)
-    for (let i = 0; i < length; i++) {
-      randomValues[i] = Math.floor(Math.random() * 4294967296);
-    }
-  }
-
-  for (let i = 0; i < length; i++) {
-    result += chars[randomValues[i] % chars.length];
+  while (result.length < length) {
+    crypto.getRandomValues(buf);
+    if (buf[0] < limit) result += chars[buf[0] % chars.length];
   }
 
   return result;

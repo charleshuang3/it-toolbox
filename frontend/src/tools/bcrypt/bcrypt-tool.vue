@@ -1,12 +1,53 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch, onBeforeUnmount } from "vue";
 import { Icon } from "@iconify/vue";
-import { hashSync, compareSync } from "bcrypt-ts";
+import { hash, compareSync } from "bcrypt-ts";
 import LabelWithActions from "../../components/LabelWithActions.vue";
 
 const input = ref("");
 const saltCount = ref(10);
-const hashed = computed(() => (input.value ? hashSync(input.value, saltCount.value) : ""));
+const minCost = 4;
+const maxCost = 14;
+const hashed = ref("");
+const hashError = ref("");
+const hashing = ref(false);
+
+let debounceTimer: ReturnType<typeof setTimeout> | undefined;
+let runId = 0;
+
+async function doHash() {
+  const id = ++runId;
+  if (!input.value) {
+    hashed.value = "";
+    hashError.value = "";
+    hashing.value = false;
+    return;
+  }
+  const cost = Math.min(maxCost, Math.max(minCost, Math.round(Number(saltCount.value)) || 10));
+  hashing.value = true;
+  try {
+    const result = await hash(input.value, cost);
+    if (id !== runId) return;
+    hashed.value = result;
+    hashError.value = "";
+  } catch (e) {
+    if (id !== runId) return;
+    hashed.value = "";
+    hashError.value = e instanceof Error ? e.message : String(e);
+  } finally {
+    if (id === runId) hashing.value = false;
+  }
+}
+
+watch([input, saltCount], () => {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(doHash, 400);
+});
+
+onBeforeUnmount(() => {
+  clearTimeout(debounceTimer);
+  runId++;
+});
 
 const compareString = ref("");
 const compareHash = ref("");
@@ -78,15 +119,20 @@ function swapToVerify() {
             v-model.number="saltCount"
             type="number"
             class="input input-bordered w-full"
-            min="0"
-            max="20"
+            :min="minCost"
+            :max="maxCost"
           />
+        </div>
+
+        <div v-if="hashError" class="alert alert-error text-sm">
+          <Icon icon="solar:danger-circle-bold" class="h-5 w-5" />
+          <span>{{ hashError }}</span>
         </div>
 
         <!-- Hashed result -->
         <div class="form-control">
           <label class="label">
-            <span class="label-text">Hashed result</span>
+            <span class="label-text">Hashed result{{ hashing ? " (hashing...)" : "" }}</span>
           </label>
           <div class="flex gap-2">
             <input
