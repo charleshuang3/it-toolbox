@@ -12,7 +12,7 @@ func SetupHandlers(r *gin.Engine, conf *config.Config) error {
 	// CORS middleware
 	r.Use(func(c *gin.Context) {
 		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Methods", "GET,OPTIONS")
+		c.Header("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
 		c.Header("Access-Control-Allow-Headers", "*")
 		c.Next()
 	})

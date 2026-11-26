@@ -2,15 +2,14 @@ package jwts
 
 import (
 	"bytes"
-	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/lestrrat-go/jwx/v3/jwa"
 	"github.com/lestrrat-go/jwx/v3/jwk"
 	"github.com/lestrrat-go/jwx/v3/jwt"
 	"github.com/stretchr/testify/assert"
@@ -227,21 +226,18 @@ func TestSignJWT(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		hmacKey    string
 		claims     map[string]any
 		wantStatus int
 	}{
 		{
-			name:    "simple claims",
-			hmacKey: "test-secret-key",
+			name: "simple claims",
 			claims: map[string]any{
 				"sub": "user123",
 			},
 			wantStatus: http.StatusOK,
 		},
 		{
-			name:    "with custom claims",
-			hmacKey: "another-secret",
+			name: "with custom claims",
 			claims: map[string]any{
 				"sub":   "user456",
 				"email": "test@example.com",
@@ -251,13 +247,11 @@ func TestSignJWT(t *testing.T) {
 		},
 		{
 			name:       "empty claims",
-			hmacKey:    "secret",
 			claims:     map[string]any{},
 			wantStatus: http.StatusOK,
 		},
 		{
-			name:    "complex nested claims",
-			hmacKey: "complex-secret",
+			name: "complex nested claims",
 			claims: map[string]any{
 				"sub": "user789",
 				"user": map[string]any{
@@ -273,8 +267,7 @@ func TestSignJWT(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			// Create request body
 			reqBody := map[string]any{
-				"hmacKey": tt.hmacKey,
-				"claims":  tt.claims,
+				"claims": tt.claims,
 			}
 			bodyBytes, err := json.Marshal(reqBody)
 			require.NoError(t, err)
@@ -302,31 +295,34 @@ func TestSignJWT(t *testing.T) {
 				require.True(t, ok, "response should contain tokens map")
 
 				// Check all supported alg token are generated
+				asymmetric := 0
 				for _, alg := range supportedAlgortihms {
+					if strings.HasPrefix(alg, "HS") {
+						continue
+					}
+					asymmetric++
 					_, ok := tokens[alg].(string)
 					assert.True(t, ok, "tokens should contain %s", alg)
 				}
-				assert.Equal(t, len(supportedAlgortihms), len(tokens), "tokens should contain all supported algorithms")
+				assert.Equal(t, asymmetric, len(tokens), "tokens should contain all asymmetric algorithms")
 
-				// Check HS256 token is present
-				hs256Token, ok := tokens["HS256"].(string)
-				require.True(t, ok, "tokens should contain HS256")
-				assert.NotEmpty(t, hs256Token, "HS256 token should not be empty")
+				// HS* tokens are signed in the browser, never by the server
+				for _, hs := range []string{"HS256", "HS384", "HS512"} {
+					_, present := tokens[hs]
+					assert.False(t, present, "server must not sign %s", hs)
+				}
+				_, ok = result["claims"].(map[string]any)
+				assert.True(t, ok, "response should echo normalized claims")
 
-				// Verify the token header contains HS256 algorithm
-				// JWT format: header.payload.signature, header is base64 encoded JSON
-				parts := bytes.Split([]byte(hs256Token), []byte("."))
-				require.Len(t, parts, 3, "JWT should have 3 parts")
-				headerBytes, err := base64.RawURLEncoding.DecodeString(string(parts[0]))
-				require.NoError(t, err, "should decode JWT header")
-				var header map[string]any
-				err = json.Unmarshal(headerBytes, &header)
-				require.NoError(t, err, "should parse JWT header")
-				assert.Equal(t, "HS256", header["alg"], "token should use HS256 algorithm")
-
-				// Parse and verify the JWT signature (HMAC key must be []byte)
-				verifiedToken, err := jwt.Parse([]byte(hs256Token), jwt.WithVerify(true), jwt.WithKey(jwa.HS256(), []byte(tt.hmacKey)))
-				require.NoError(t, err, "token should be verifiable with the same HMAC key")
+				// Check RS256 token is present
+				rs256Token, ok := tokens["RS256"].(string)
+				require.True(t, ok, "tokens should contain RS256")
+				jwksW := httptest.NewRecorder()
+				r.ServeHTTP(jwksW, httptest.NewRequest(http.MethodGet, "/jwt/.well-known/jwks.json", nil))
+				pubKeys, err := jwk.Parse(jwksW.Body.Bytes())
+				require.NoError(t, err)
+				verifiedToken, err := jwt.Parse([]byte(rs256Token), jwt.WithKeySet(pubKeys))
+				require.NoError(t, err, "token should be verifiable with the JWKS")
 
 				// Verify claims in the token
 				iss, ok := verifiedToken.Issuer()
@@ -351,4 +347,22 @@ func TestSignJWT(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestSignJWTBadRequest(t *testing.T) {
+	r := gin.New()
+	require.NoError(t, SetupHandlers(r.Group("/"), config.JWKSConfig{Issuer: "https://test.example.com"}))
+
+	req := httptest.NewRequest(http.MethodPost, "/jwt/sign", bytes.NewReader([]byte("{not json")))
+	req.Header.Set("Content-Type", "application/json")
+	w := httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
+
+	// missing claims must not panic and still yields tokens
+	req = httptest.NewRequest(http.MethodPost, "/jwt/sign", bytes.NewReader([]byte("{}")))
+	req.Header.Set("Content-Type", "application/json")
+	w = httptest.NewRecorder()
+	r.ServeHTTP(w, req)
+	assert.Equal(t, http.StatusOK, w.Code)
 }

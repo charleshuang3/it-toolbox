@@ -35,12 +35,6 @@ var supportedAlgortihms = []string{
 	"EdDSA",
 }
 
-var hmacSHAAlgortihms = []jwa.SignatureAlgorithm{
-	jwa.HS256(),
-	jwa.HS384(),
-	jwa.HS512(),
-}
-
 func SetupHandlers(r *gin.RouterGroup, config config.JWKSConfig) error {
 	handler, err := newJWKSHandler(config)
 	if err != nil {
@@ -195,20 +189,27 @@ func (s *jwksHandler) jwks(c *gin.Context) {
 	jsonBytes, err := json.MarshalIndent(s.publicKeySet, "", "  ")
 	if err != nil {
 		c.JSON(500, gin.H{"error": "failed to export JWKS"})
+		return
 	}
 
 	c.Data(200, "application/json", jsonBytes)
 }
 
+// signJWTRequest only carries claims. HMAC (HS*) tokens are signed in the
+// browser so user secrets never reach the server.
 type signJWTRequest struct {
-	HMACKey string         `json:"hmacKey"`
-	Claims  map[string]any `json:"claims"`
+	Claims map[string]any `json:"claims"`
 }
 
 func (s *signJWTRequest) normalizeClaims(conf *config.JWKSConfig) {
 	now := time.Now()
+	if s.Claims == nil {
+		s.Claims = map[string]any{}
+	}
 
-	// if "iss" set, overwrite it to conf.Issuer
+	// Always overwrite "iss" with conf.Issuer: this server acts as the test IdP,
+	// and its JWKS/openid-configuration are only discoverable via that issuer,
+	// so a token with a different iss could never be verified against these keys.
 	s.Claims["iss"] = conf.Issuer
 
 	// if "iat" not set, set as now
@@ -234,12 +235,6 @@ func (s *jwksHandler) signJWT(c *gin.Context) {
 		return
 	}
 
-	hmacKey, err := jwk.Import([]byte(req.HMACKey))
-	if err != nil {
-		c.JSON(500, gin.H{"error": fmt.Sprintf("failed to import HMAC key: %v", err)})
-		return
-	}
-
 	req.normalizeClaims(&s.config)
 
 	b := jwt.NewBuilder()
@@ -254,17 +249,7 @@ func (s *jwksHandler) signJWT(c *gin.Context) {
 
 	tokens := map[string]string{}
 
-	// sign HS*
-	for _, alg := range hmacSHAAlgortihms {
-		signed, err := jwt.Sign(tok, jwt.WithKey(alg, hmacKey))
-		if err != nil {
-			c.JSON(500, gin.H{"error": fmt.Sprintf("failed to sign token: %v", err)})
-			return
-		}
-		tokens[alg.String()] = string(signed)
-	}
-
-	// sign RS* PS* ES* with cached keys
+	// sign RS* PS* ES* EdDSA with cached keys
 	for _, key := range s.keys {
 		signed, err := jwt.Sign(tok, jwt.WithKey(key.algorithm, key.privateKey))
 		if err != nil {
@@ -276,5 +261,7 @@ func (s *jwksHandler) signJWT(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"tokens": tokens,
+		// normalized claims (iss/iat/nbf/exp filled in) so the client can sign HS* locally with the same claims
+		"claims": req.Claims,
 	})
 }
