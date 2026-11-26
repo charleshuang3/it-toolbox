@@ -46,7 +46,7 @@ COPY frontend/.env ./
 RUN pnpm run build
 
 # Stage 3: Deploy
-FROM alpine:latest AS deploy
+FROM alpine:3.24.4 AS deploy
 
 WORKDIR /app
 
@@ -58,6 +58,15 @@ COPY --from=builder-backend /build/backend/it-toolbox /app/it-toolbox
 
 # Copy frontend build from builder stage
 COPY --from=builder-frontend /build/frontend/dist /app/frontend
+
+# Run as non-root user
+RUN adduser -D -H -u 10001 app && chown -R app:app /app
+USER app
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget -q -O /dev/null http://127.0.0.1:8080/icon.svg || exit 1
 
 # Default command - run the backend with simple config
 CMD ["/app/it-toolbox"]

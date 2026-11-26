@@ -1,7 +1,10 @@
 name: Docker on Push
 
 on:
-  push:
+  # Publish only after the "Test on Push" workflow succeeded on main
+  workflow_run:
+    workflows: ["Test on Push"]
+    types: [completed]
     branches: [ "main" ]
   workflow_dispatch:
 
@@ -12,6 +15,7 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
       contents: read
@@ -20,6 +24,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Log in to the Container registry
         uses: docker/login-action@v4

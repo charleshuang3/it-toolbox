@@ -3,11 +3,12 @@ name: Test on Push
 on:
   push:
     branches: [ main ]
+  pull_request:
 
 env:
   GO_VERSION: '1.27.4'
-  GOIMPORTS_VERSION: latest
-  GOLANGCI_LINT_VERSION: latest
+  GOIMPORTS_VERSION: v0.53.0
+  GOLANGCI_LINT_VERSION: v2.15.0
   NODE_VERSION: '26'
   PNPM_VERSION: '12.21.0'
 
@@ -69,6 +70,9 @@ jobs:
 
       - name: Format check
         run: pnpm run fmt:check
+
+      - name: Typecheck
+        run: pnpm run typecheck
 
       - name: Run tests
         run: pnpm run test:run
