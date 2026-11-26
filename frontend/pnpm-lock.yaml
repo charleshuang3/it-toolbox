@@ -220,6 +220,9 @@ importers:
       fast-xml-parser:
         specifier: ^5.12.1
         version: 5.12.1
+      he:
+        specifier: ^2.0.0
+        version: 2.0.0
       jose:
         specifier: ^6.2.17
         version: 6.2.17
@@ -278,6 +281,9 @@ importers:
       '@types/culori':
         specifier: ^4.0.1
         version: 4.0.1
+      '@types/he':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@types/luxon':
         specifier: ^3.7.6
         version: 3.7.6
@@ -964,6 +970,9 @@ packages:
   '@types/estree@1.0.10':
     resolution: {integrity: sha512-lTyOMnOcmRBzdCv6/4zUZCrEhV0xrqQiUZBZtVcbmLHBXKLnN8q89v/wKRF/Q0HbwVsqbIG3o5HDoFl9sduM+g==}
 
+  '@types/he@1.2.3':
+    resolution: {integrity: sha512-q67/qwlxblDzEDvzHhVkwc1gzVWxaNxeyHUBF4xElrvjL11O+Ytze+1fGpBHlr/H9myiBUaUXNnNPmBHxxfAcA==}
+
   '@types/luxon@3.7.6':
     resolution: {integrity: sha512-6KSjliQAXK8ZLgFQO4B7iE4Rpf/B3rItzCFuXezBY/XIAGxOdLd7vRNK9/StRPwiS/yJsVbB7HKpW46B8tcEuQ==}
 
@@ -1309,6 +1318,11 @@ packages:
 
   graceful-fs@4.2.12:
     resolution: {integrity: sha512-iuyGF2E4oafQfPsRrG2wtY2ILupMhvtdrhzrxB+0VcjsPpSPttpfYdjnGFGsTi5MaJFjI1jOKHPQ6UTbTj9TAw==}
+
+  he@2.0.0:
+    resolution: {integrity: sha512-0jE+JPv08nhXWmI1dULybzqNt34RbkH6Ul6V4cmDONpjYx1SfyObKF38FJLaJ1K7WWD93LWL9lewzk4E1Ria4A==}
+    engines: {node: '>=22'}
+    hasBin: true
 
   hookable@5.5.3:
     resolution: {integrity: sha512-Yc+BQe8SvoXH1643Qez1zqLRmbA5rCL+sSmk6TVos0LWVfNIB7PGncdlId77WzLGSIB5KaWgTaNTs2lNVEI6VQ==}
@@ -2441,6 +2455,8 @@ snapshots:
 
   '@types/estree@1.0.10': {}
 
+  '@types/he@1.2.3': {}
+
   '@types/luxon@3.7.6': {}
 
   '@types/node@26.6.6':
@@ -2788,6 +2804,8 @@ snapshots:
   get-caller-file@2.0.5: {}
 
   graceful-fs@4.2.12: {}
+
+  he@2.0.0: {}
 
   hookable@5.5.3: {}
 
