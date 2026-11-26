@@ -214,6 +214,12 @@ importers:
       codemirror-json5:
         specifier: ^1.0.3
         version: 1.0.3
+      cron-parser:
+        specifier: ^5.10.6
+        version: 5.10.6
+      cronstrue:
+        specifier: ^3.50.0
+        version: 3.50.0
       culori:
         specifier: ^4.0.2
         version: 4.0.2
@@ -1207,6 +1213,14 @@ packages:
 
   crelt@1.0.7:
     resolution: {integrity: sha512-aK6BbWfhf4U/wCcLHKPJl/xa6VkVstRaPywWtMKGwuOLc/wZTyQYuoxgvZnNsBvv7Kg3YTBQYYBCggcviQczuA==}
+
+  cron-parser@5.10.6:
+    resolution: {integrity: sha512-kpoxgQyveO1l29nw+FWdvmotyV7eOSzGHQpxiXOEZIDOjqO1iR6kfgJ0PVHTuV26uBemKq3ppzma7dHFAG7viw==}
+    engines: {node: '>=18'}
+
+  cronstrue@3.50.0:
+    resolution: {integrity: sha512-TEyCgvAnGrM/AZDct9CSx70x7J92MehX+vx12hXb1ZlkyXLpFHmviL1wAnH/3NGq+pknzaVbmmwonvBMUUnG1g==}
+    hasBin: true
 
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
@@ -2728,6 +2742,12 @@ snapshots:
   confbox@0.3.2: {}
 
   crelt@1.0.7: {}
+
+  cron-parser@5.10.6:
+    dependencies:
+      luxon: 3.7.2
+
+  cronstrue@3.50.0: {}
 
   csstype@3.2.3: {}
 
