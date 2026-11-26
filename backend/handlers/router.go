@@ -6,6 +6,7 @@ import (
 	"github.com/charleshuang3/it-toolbox/backend/config"
 	"github.com/charleshuang3/it-toolbox/backend/handlers/frontend"
 	"github.com/charleshuang3/it-toolbox/backend/handlers/jwts"
+	"github.com/charleshuang3/it-toolbox/backend/handlers/nettools"
 )
 
 func SetupHandlers(r *gin.Engine, conf *config.Config) error {
@@ -19,6 +20,10 @@ func SetupHandlers(r *gin.Engine, conf *config.Config) error {
 
 	api := r.Group("/api")
 	if err := jwts.SetupHandlers(api, conf.JWKS); err != nil {
+		return err
+	}
+
+	if err := nettools.SetupHandlers(api, conf.NetworkTools); err != nil {
 		return err
 	}
 
