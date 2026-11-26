@@ -179,6 +179,9 @@ export async function verifySignature(
   secretKey: string,
   header: JwtHeader | null,
   payload: JwtPayload | null,
+  // Remote key discovery contacts the token's (untrusted) issuer, so it only
+  // happens when the user explicitly asks for it.
+  allowRemoteFetch = false,
 ): Promise<{ verified: boolean | null; error: string | null }> {
   if (!token.trim()) {
     return { verified: null, error: null };
@@ -203,6 +206,10 @@ export async function verifySignature(
     } catch {
       return { verified: false, error: "Signature invalid" };
     }
+  }
+
+  if (!allowRemoteFetch) {
+    return { verified: null, error: null };
   }
 
   if (!payload?.iss) {

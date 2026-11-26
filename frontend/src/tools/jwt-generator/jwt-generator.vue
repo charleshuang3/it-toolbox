@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { SignJWT } from "jose";
 import { Icon } from "@iconify/vue";
 import JsonEditorVue from "json-editor-vue";
 import { Mode } from "vanilla-jsoneditor";
@@ -14,6 +15,24 @@ import {
 
 interface JwtResponse {
   tokens: Record<string, string>;
+  claims?: Record<string, unknown>;
+}
+
+const HMAC_ALGORITHMS = ["HS256", "HS384", "HS512"] as const;
+
+// HMAC signing happens entirely in the browser so the secret never leaves it.
+async function signHmacTokens(
+  secret: string,
+  claims: Record<string, unknown>,
+): Promise<Record<string, string>> {
+  const key = new TextEncoder().encode(secret);
+  const tokens: Record<string, string> = {};
+  for (const alg of HMAC_ALGORITHMS) {
+    tokens[alg] = await new SignJWT(claims as never)
+      .setProtectedHeader({ alg, typ: "JWT" })
+      .sign(key);
+  }
+  return tokens;
 }
 
 // Time offset options
@@ -69,30 +88,44 @@ async function generate() {
   isLoading.value = true;
   errorMessage.value = "";
 
-  try {
-    const response = await fetch("/api/jwt/sign", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        hmacKey: hmacKey.value,
-        claims: {
-          ...otherClaims.value,
-          iat: issuedAtTimestamp.value,
-          exp: expirationTimestamp.value,
-          nbf: notBeforeTimestamp.value,
-        },
-      }),
-    });
+  const claims: Record<string, unknown> = {
+    ...otherClaims.value,
+    iat: issuedAtTimestamp.value,
+    exp: expirationTimestamp.value,
+    nbf: notBeforeTimestamp.value,
+  };
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || "Failed to generate JWT");
+  try {
+    // Asymmetric (RS/PS/ES/EdDSA) tokens come from the backend test IdP.
+    // Only claims are sent; the HMAC secret never leaves the browser.
+    let signedClaims = claims;
+    let asymmetric: Record<string, string> = {};
+    try {
+      const response = await fetch("/api/jwt/sign", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ claims }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to generate JWT");
+      }
+
+      const data: JwtResponse = await response.json();
+      asymmetric = data.tokens;
+      // use the backend-normalized claims (e.g. iss) so HS* tokens match
+      signedClaims = data.claims ?? claims;
+    } catch (err) {
+      errorMessage.value =
+        (err instanceof Error ? err.message : "Failed to generate JWT") +
+        " (asymmetric tokens unavailable)";
     }
 
-    const data: JwtResponse = await response.json();
-    generatedTokens.value = data.tokens;
+    const hmac = await signHmacTokens(hmacKey.value, signedClaims);
+    generatedTokens.value = { ...hmac, ...asymmetric };
   } catch (err) {
     errorMessage.value = err instanceof Error ? err.message : "Failed to generate JWT";
     generatedTokens.value = {};

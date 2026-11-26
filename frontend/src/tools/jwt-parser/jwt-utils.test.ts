@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from "vitest";
+import { describe, it, expect, beforeAll, vi } from "vitest";
 import {
   formatTimestamp,
   formatValue,
@@ -269,6 +269,33 @@ describe("jwt-utils", () => {
       const result = await verifySignature(testToken, "   ", { alg: "HS256" }, null);
       expect(result.verified).toBe(false);
       expect(result.error).toBe("Require key");
+    });
+
+    it("should not fetch remote keys for non-HMAC tokens unless explicitly allowed", async () => {
+      const fetchSpy = vi.spyOn(globalThis, "fetch");
+      const result = await verifySignature(
+        "a.b.c",
+        "",
+        { alg: "RS256" },
+        { iss: "https://issuer.example.com" },
+      );
+      expect(fetchSpy).not.toHaveBeenCalled();
+      expect(result).toEqual({ verified: null, error: null });
+      fetchSpy.mockRestore();
+    });
+
+    it("should fetch issuer configuration when explicitly allowed", async () => {
+      const fetchSpy = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network"));
+      const result = await verifySignature(
+        "a.b.c",
+        "",
+        { alg: "RS256" },
+        { iss: "https://issuer.example.com" },
+        true,
+      );
+      expect(fetchSpy).toHaveBeenCalled();
+      expect(result.verified).toBe(false);
+      fetchSpy.mockRestore();
     });
 
     it("should handle whitespace token", async () => {

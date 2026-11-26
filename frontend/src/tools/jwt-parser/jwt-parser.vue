@@ -24,6 +24,7 @@ const parsedResult = ref<ParsedResult>({
 
 const signatureVerified = ref<boolean | null>(null);
 const verificationError = ref<string | null>(null);
+const verifying = ref(false);
 
 const headerFields = ref<FieldDisplay[]>([]);
 const payloadFields = ref<FieldDisplay[]>([]);
@@ -51,33 +52,37 @@ function clearInput() {
   verificationError.value = null;
 }
 
+function runVerify(allowRemoteFetch = false) {
+  const token = inputToken.value;
+  verifySignature(
+    token,
+    secretKey.value,
+    parsedResult.value.header,
+    parsedResult.value.payload,
+    allowRemoteFetch,
+  ).then((r) => {
+    if (token !== inputToken.value) return; // stale result
+    signatureVerified.value = r.verified;
+    verificationError.value = r.error;
+    verifying.value = false;
+  });
+}
+
+// Explicit user action: contacts the issuer named in the token.
+function fetchKeysAndVerify() {
+  verifying.value = true;
+  runVerify(true);
+}
+
 watch(inputToken, () => {
   parsedResult.value = parseJwt(inputToken.value);
   updateFields();
-  const result = verifySignature(
-    inputToken.value,
-    secretKey.value,
-    parsedResult.value.header,
-    parsedResult.value.payload,
-  );
-  result.then((r) => {
-    signatureVerified.value = r.verified;
-    verificationError.value = r.error;
-  });
+  signatureVerified.value = null;
+  verificationError.value = null;
+  runVerify();
 });
 
-watch([secretKey], () => {
-  const result = verifySignature(
-    inputToken.value,
-    secretKey.value,
-    parsedResult.value.header,
-    parsedResult.value.payload,
-  );
-  result.then((r) => {
-    signatureVerified.value = r.verified;
-    verificationError.value = r.error;
-  });
-});
+watch([secretKey], () => runVerify());
 
 onMounted(async () => {
   const now = Math.floor(Date.now() / 1000);
@@ -86,18 +91,6 @@ onMounted(async () => {
     name: "John Doe",
     iat: now,
     exp: now + 600, // 10 minutes
-  });
-  parsedResult.value = parseJwt(inputToken.value);
-  updateFields();
-  const result = verifySignature(
-    inputToken.value,
-    secretKey.value,
-    parsedResult.value.header,
-    parsedResult.value.payload,
-  );
-  result.then((r) => {
-    signatureVerified.value = r.verified;
-    verificationError.value = r.error;
   });
 });
 </script>
@@ -222,6 +215,22 @@ onMounted(async () => {
 
         <!-- Only show divider between key input and signature status when key input is shown -->
         <div v-if="isHmac" class="divider"></div>
+
+        <!-- Remote key fetch (non-HMAC): only on explicit user action -->
+        <div v-if="signatureString && !isHmac" class="flex items-center gap-2">
+          <button
+            class="btn btn-primary btn-sm"
+            :disabled="verifying || !parsedResult.payload?.iss"
+            @click="fetchKeysAndVerify"
+          >
+            <span v-if="verifying" class="loading loading-spinner loading-sm"></span>
+            Fetch keys / Verify
+          </button>
+          <span class="text-xs text-base-content/60">
+            Requests
+            {{ parsedResult.payload?.iss || "the issuer" }}/.well-known/openid-configuration
+          </span>
+        </div>
 
         <!-- Signature verification table -->
         <div v-if="signatureString" class="form-control">
